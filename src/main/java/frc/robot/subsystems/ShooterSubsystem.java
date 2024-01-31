@@ -1,44 +1,78 @@
 package frc.robot.subsystems;
 
 
+import java.util.function.DoubleSupplier;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+
 
 public class ShooterSubsystem extends SubsystemBase{
-    /* 
-    public static CANSparkMax shooterMotor = new CANSparkMax(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
-    public static CANSparkMax shooterMotor2 = new CANSparkMax(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
-    public double speed = 0;
+
+
+    private CANSparkMax shooterMotor1;
+    private CANSparkMax shooterMotor2;
+    private SparkPIDController shooterMotor1_PidController;
+    private SparkPIDController shooterMotor2_PidController;
+    private RelativeEncoder shooterMotor1_Encoder;
+    private RelativeEncoder shooterMotor2_Encoder;
+
+    private final double MAX_RPM = 5000;
+
     public ShooterSubsystem(){
-        shooterMotor.restoreFactoryDefaults();
-        shooterMotor.setIdleMode(IdleMode.kBrake);
-        shooterMotor.setSmartCurrentLimit(20);
+
+        shooterMotor1 = new CANSparkMax(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
+        shooterMotor2 = new CANSparkMax(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
+
+        shooterMotor1.restoreFactoryDefaults();
         shooterMotor2.restoreFactoryDefaults();
-        shooterMotor2.setIdleMode(IdleMode.kBrake);
-        shooterMotor2.setSmartCurrentLimit(20);
-
-        setDefaultCommand(new ShooterCommand(this));
+        shooterMotor1_PidController = shooterMotor1.getPIDController();
+        shooterMotor2_PidController = shooterMotor2.getPIDController();
+        shooterMotor1_Encoder = shooterMotor1.getEncoder();
+        shooterMotor2_Encoder = shooterMotor2.getEncoder();
+        
+        shooterMotor1_PidController.setP(Constants.PID.kP);
+        shooterMotor2_PidController.setP(Constants.PID.kP);
+        shooterMotor1_PidController.setI(Constants.PID.kI);
+        shooterMotor2_PidController.setP(Constants.PID.kP);
+        shooterMotor1_PidController.setD(Constants.PID.kD);
+        shooterMotor2_PidController.setP(Constants.PID.kP);
+        shooterMotor1_PidController.setIZone(Constants.PID.kIz);
+        shooterMotor2_PidController.setIZone(Constants.PID.kIz);
+        shooterMotor1_PidController.setFF(Constants.PID.kFF);
+        shooterMotor2_PidController.setFF(Constants.PID.kFF);
+        shooterMotor1_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
+        shooterMotor2_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
+        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor1.setIdleMode(IdleMode.kCoast);
     }
-    */
+
+    public void run(DoubleSupplier speed){
+        shooterMotor1_PidController.setReference(-speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor2_PidController.setReference(speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    }
+
+    public void maxSpeed(){
+        shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    }
+
+    public void coast(){
+    }
+
+    public static void stop(){
+        //ShooterSubsystem.shooterMotor.stopMotor();
+        //ShooterSubsystem.shooterMotor2.stopMotor();
+    }
+    
     public void periodic(){
-
-        // NEED TO FIX!!!
-
-
-        //ShooterCommand.run(0.1);
-
-        //speed += 0.01*RobotContainer.manipulator.getLeftY();
-        //    if(speed >= 1){
-        //       speed = 1;
-        //    } else if(speed <= -1){
-        //        speed = -1;
-        //    }
-
-        //if(RobotContainer.manipulator.getRawButton(1)){
-        //    ShooterCommand.run(speed);
-        //} else {
-        //    ShooterCommand.run(0);
-        //}
-
         
     }
 }

@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -16,6 +17,7 @@ public class SwerveJoystickCmd extends Command {
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final SlewRateLimiter turningLimiter;
+
     //private final SlewRateLimiter xLimiter, yLimiter;
 
     public SwerveJoystickCmd(SwerveSubsystem swerveSubsystem,
@@ -26,8 +28,6 @@ public class SwerveJoystickCmd extends Command {
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
-        //this.xLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
-        //this.yLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond);
         this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
         addRequirements(swerveSubsystem);
     }
@@ -38,18 +38,17 @@ public class SwerveJoystickCmd extends Command {
 
     @Override
     public void execute() {
-        // 1. Get real-time joystick inputs
+        //Get real-time joystick inputs
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
-        
-        // 2. Apply deadband
+
+        //Apply deadband
         xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
         ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
         turningSpeed = Math.abs(turningSpeed) > OIConstants.kDeadband ? turningSpeed : 0.0;
 
-        // 3. Make the driving smoother
-        
+        //Make the driving smoother
         
         //OUTPUT ERROR MESSAGES --> 
         //String message_x = " " + xSpeed;
@@ -58,34 +57,31 @@ public class SwerveJoystickCmd extends Command {
         //DriverStation.reportWarning(message_y, false);
         //DriverStation.reportWarning(message_t, false);
 
-
         //Applying Smoothing Curve (f(x) = x^2)
-        //xSpeed = Math.abs(xSpeed)*xSpeed;
-        //ySpeed = Math.abs(ySpeed)*ySpeed;
-        
-        
+  
         //xSpeed = xLimiter.calculate(xSpeed*DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         //ySpeed = yLimiter.calculate(ySpeed*DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
-        turningSpeed = turningLimiter.calculate(turningSpeed)* DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond;
 
-
-        // 4. Construct desired chassis speeds
+        turningSpeed = turningLimiter.calculate(turningSpeed*Math.abs(turningSpeed))* DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond;
+        xSpeed = Math.abs(xSpeed)*xSpeed;
+        ySpeed = Math.abs(ySpeed)*ySpeed;
+        
+        //Construct desired chassis speeds
         ChassisSpeeds chassisSpeeds;
         if (fieldOrientedFunction.get()) {
             // Relative to field
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2d());
-            
 
-        } else {
+         } else {
             // Relative to robot
             chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         }
 
-        // 5. Convert chassis speeds to individual module states
+        //Convert chassis speeds to individual module states
         SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
-        // 6. Output each module states to wheels
+        //Output each module states to wheels
         swerveSubsystem.setModuleStates(moduleStates);
     }
 

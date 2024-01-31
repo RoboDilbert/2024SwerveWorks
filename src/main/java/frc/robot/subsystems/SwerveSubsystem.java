@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -7,13 +8,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.ShooterCommand;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -122,17 +123,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
-        
-
-        
-
-        
-        
-
         //Error Messages
-        //double x = frontLeft.getAbsoluteEncoderDeg();
-        //String message1 = "frontLeft - " + x;
-        //DriverStation.reportWarning(message1, false);
+        double x = frontLeft.getAbsoluteEncoderDeg();
+        String message1 = "frontLeft - " + x;
+        DriverStation.reportWarning(message1, false);
 
         //double y = frontRight.getAbsoluteEncoderDeg();
         //String message2 = "frontRight - " + y;
@@ -146,51 +140,17 @@ public class SwerveSubsystem extends SubsystemBase {
         //String message4 = "backRight - " + w;
         //DriverStation.reportWarning(message4, false);
 
-
-
         //Applying Brake Multiplier
-        desiredStates[0].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
+        /*desiredStates[0].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
         desiredStates[1].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
         desiredStates[2].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
-        desiredStates[3].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
-
+        desiredStates[3].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));*/
+        
         
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
+    } 
 
-
-        speed += 0.01*RobotContainer.manipulator.getLeftY();
-            if(speed >= 1){
-               speed = 1;
-            } else if(speed <= -1){
-                speed = -1;
-        }
-
-
-
-        if(RobotContainer.manipulator.getRawButton(1)){
-            ShooterCommand.run(speed);
-        } else {
-            ShooterCommand.stop();
-        }
-
-        
-
-
-        //public double tx = LimelightHelpers.getTX("");
-        //public double ty = LimelightHelpers.getTY("");
-        //public double distance = LimelightHelpers.getTA("");
-
-
-
-        //String error = " " + LimelightHelpers.getTX("");
-
-
-        //DriverStation.reportError(error, false);
-
-        
-        
-    }
 }

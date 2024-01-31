@@ -11,14 +11,18 @@ public final class Constants {
         public static final int shooter1SparkID = 18;
         public static final int shooter2SparkID = 17;
 
+        public static final int intake1SparkID = 19;
+        public static final int intake2SparkID = 20;
+
     }
-    public class ShooterPID{
+    public class PID{
+
         //PID Coefficients
-        public static final double kP = 5e-5;
-        public static final double kI = 0;
+        public static final double kP = 5e-4;
+        public static final double kI = 5e-6;
         public static final double kD = 0;
         public static final double kIz = 0;
-        public static final double kFF = 0.000156;
+        public static final double kFF = 0.0000156;
         public static final double kMaxOutput = 1;
         public static final double kMinOutput = -1;
         public static final double maxRPM = 5700;
@@ -95,8 +99,6 @@ public final class Constants {
         
 
         
-
-        
         
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 1 * Math.PI;
@@ -112,11 +114,11 @@ public final class Constants {
         public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
         public static final double kMaxAngularSpeedRadiansPerSecond =
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 0.2;
-        public static final double kPYController = 0.2;
-        public static final double kPThetaController = 0.2;
+        public static final double kPXController = .5;
+        public static final double kPYController = .5;
+        public static final double kPThetaController = .7;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
