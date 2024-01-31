@@ -1,15 +1,12 @@
 package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
-
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterCommand extends Command{
 
     private final ShooterSubsystem m_shooterSubsystem;
-
     private final DoubleSupplier m_power;
 
     public ShooterCommand(ShooterSubsystem shooter, DoubleSupplier power){

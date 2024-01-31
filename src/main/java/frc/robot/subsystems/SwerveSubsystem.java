@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -13,12 +14,9 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
-
-    double speed = 0;
 
     private final SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
@@ -56,15 +54,9 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderOffsetRad,
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
-    private final AHRS gyro = new AHRS(SPI.Port.kMXP);
-
-
-    //private final Pigeon2 gyro_robot = new Pigeon2(13);
-
-
-    private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
-
     private final SwerveDriveOdometry odometer;
+    private final AHRS gyro = new AHRS(SPI.Port.kMXP);
+    private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
 
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
@@ -109,7 +101,6 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), modulePosition);
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
-
     }
 
     public void stopModules() {
@@ -123,34 +114,25 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
-        //Error Messages
-        double x = frontLeft.getAbsoluteEncoderDeg();
-        String message1 = "frontLeft - " + x;
-        DriverStation.reportWarning(message1, false);
-
-        //double y = frontRight.getAbsoluteEncoderDeg();
-        //String message2 = "frontRight - " + y;
-        //DriverStation.reportWarning(message2, false);
-
-        //double z = backLeft.getAbsoluteEncoderDeg();
-        //String message3 = "backLeft - " + z;
-        //DriverStation.reportWarning(message3, false);
-
-        //double w = backRight.getAbsoluteEncoderDeg();
-        //String message4 = "backRight - " + w;
-        //DriverStation.reportWarning(message4, false);
-
-        //Applying Brake Multiplier
-        /*desiredStates[0].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
-        desiredStates[1].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
-        desiredStates[2].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));
-        desiredStates[3].speedMetersPerSecond *= (1.05-RobotContainer.ps4_controller.getRawAxis(3));*/
-        
-        
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     } 
 
+    public void setModuleStates(SwerveModuleState[] desiredStates, Supplier<Double> brakeFunction) {
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+
+        //Applying Brake Multiplier
+        desiredStates[0].speedMetersPerSecond *= (1.05 - brakeFunction.get());
+        desiredStates[1].speedMetersPerSecond *= (1.05 - brakeFunction.get());
+        desiredStates[2].speedMetersPerSecond *= (1.05 - brakeFunction.get());
+        desiredStates[3].speedMetersPerSecond *= (1.05 - brakeFunction.get());
+
+        frontLeft.setDesiredState(desiredStates[0]);
+        frontRight.setDesiredState(desiredStates[1]);
+        backLeft.setDesiredState(desiredStates[2]);
+        backRight.setDesiredState(desiredStates[3]);
+    } 
 }

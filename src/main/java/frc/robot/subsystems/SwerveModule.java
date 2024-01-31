@@ -4,7 +4,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -69,7 +68,6 @@ public class SwerveModule {
     }
 
     public double getAbsoluteEncoderRad() {
-        //double angle = absoluteEncoder.getBusVoltage() / RobotController.getVoltage5V();
         double angle = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
         angle *= 2*Math.PI;
         angle -= absoluteEncoderOffsetRad;

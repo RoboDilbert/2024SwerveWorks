@@ -1,10 +1,8 @@
 package frc.robot;
 
 import java.util.List;
-
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerTrajectory;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,7 +10,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -36,41 +33,22 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
 
-    //public final static PS4Controller ps4_controller = new PS4Controller(0);
-    //public final static PS4Controller manipulator = new PS4Controller(2);
     CommandXboxController driver_controller = new CommandXboxController(0);
-    CommandXboxController manipulator = new CommandXboxController(2); // Creates a CommandXboxController on port 1.
-
-       
+    CommandXboxController manipulator = new CommandXboxController(2); 
 
         public RobotContainer() {
-                /*swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
-                        () -> -ps4_controller.getLeftX(),
-                        () -> -ps4_controller.getLeftY(),
-                        () -> -ps4_controller.getRawAxis(4),
-                        () -> true
-                ));*/
-
-
-                        
-                        //() -> driver_controller.getRawButton(1),
-                        //() -> driver_controller.getRawButton(2)
-                
-                
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                         () -> -driver_controller.getLeftX(),
                         () -> -driver_controller.getLeftY(),
                         () -> -driver_controller.getRawAxis(4),
+                        () -> driver_controller.getRawAxis(3),
                         () -> true
                 ));
                 
-
                 shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
                         () -> manipulator.getLeftY()
                 ));
-                configureButtonBindings();
-
-                
+                configureButtonBindings(); 
         }
         
 
@@ -116,14 +94,12 @@ public class RobotContainer {
     
     public Command getAutonomousCommand() {
         // 1. Create trajectory settings
-        
         TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
                 AutoConstants.kMaxSpeedMetersPerSecond,
                 AutoConstants.kMaxAccelerationMetersPerSecondSquared)
                         .setKinematics(DriveConstants.kDriveKinematics);
 
         // 2. Generate trajectory
-        
         Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
                 new Pose2d(0, 0, new Rotation2d(0)),
                 List.of(

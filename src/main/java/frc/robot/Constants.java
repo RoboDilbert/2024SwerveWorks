@@ -13,10 +13,9 @@ public final class Constants {
 
         public static final int intake1SparkID = 19;
         public static final int intake2SparkID = 20;
-
     }
-    public class PID{
 
+    public class PID{
         //PID Coefficients
         public static final double kP = 5e-4;
         public static final double kI = 5e-6;
@@ -46,7 +45,6 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-
         public static final double kTrackWidth = Units.inchesToMeters(21.5);
         // Distance between right and left wheels
         public static final double kWheelBase = Units.inchesToMeters(21.5);
@@ -81,25 +79,17 @@ public final class Constants {
         public static final int kBackLeftDriveAbsoluteEncoderPort = 12;
         public static final int kFrontRightDriveAbsoluteEncoderPort = 10;
         public static final int kBackRightDriveAbsoluteEncoderPort = 11;
-        //public static final int kGyroPort = 13;
 
         public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = true;
         public static final boolean kBackLeftDriveAbsoluteEncoderReversed = true;
         public static final boolean kFrontRightDriveAbsoluteEncoderReversed = true;
         public static final boolean kBackRightDriveAbsoluteEncoderReversed = true;
-
-
-        public static final double kDriveMasterOffsetRad = Math.toRadians(90);
         
         public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(119.437+90);
         public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(130.219+90); 
         public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(42.781+90);
         public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(19.543+90);
 
-        
-
-        
-        
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 1 * Math.PI;
 

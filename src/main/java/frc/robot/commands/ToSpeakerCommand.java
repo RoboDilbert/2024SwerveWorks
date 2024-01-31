@@ -24,7 +24,6 @@ public class ToSpeakerCommand extends Command {
     @Override
     public void execute() {
         //Figure out distance and angle to apriltag
-        
         double xSpeed = 0;
         double ySpeed;
         double turningSpeed;

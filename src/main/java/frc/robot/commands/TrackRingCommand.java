@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import java.util.function.Supplier;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +13,6 @@ public class TrackRingCommand extends Command {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction;
-
 
     public TrackRingCommand (SwerveSubsystem swerveSubsystem,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction) {
@@ -32,7 +30,6 @@ public class TrackRingCommand extends Command {
     @Override
     public void execute() {
         //Get real-time joystick inputs and angle from apriltag
-        
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
         double turningSpeed;
@@ -42,17 +39,15 @@ public class TrackRingCommand extends Command {
         xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;
         ySpeed = Math.abs(ySpeed) > OIConstants.kDeadband ? ySpeed : 0.0;
 
-
+        //Make driving smoother
         turningSpeed = -kPturning*LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX() * 4.5;
         xSpeed = Math.abs(xSpeed)*xSpeed;
         ySpeed = Math.abs(ySpeed)*ySpeed;
         
-
-        //onstruct desired chassis speeds
+        //Construct desired chassis speeds
         ChassisSpeeds chassisSpeeds;
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
         
-
         //Convert chassis speeds to individual module states
         SwerveModuleState[] moduleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
