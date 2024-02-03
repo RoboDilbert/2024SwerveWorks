@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,11 +21,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterMaxCommand;
+import frc.robot.commands.ToAmpCommand;
 import frc.robot.commands.ToSpeakerCommand;
 import frc.robot.commands.TrackSpeakerCommand;
 import frc.robot.commands.TrackRingCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.SensorsSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
@@ -32,6 +35,8 @@ public class RobotContainer {
     private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
+    private final SensorsSubsystem sensorsSubsystem = new SensorsSubsystem();
+    
 
     CommandXboxController driver_controller = new CommandXboxController(0);
     CommandXboxController manipulator = new CommandXboxController(2); 
@@ -48,6 +53,8 @@ public class RobotContainer {
                 shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
                         () -> manipulator.getLeftY()
                 ));
+
+                sensorsSubsystem.setRangeMode("Long");
                 configureButtonBindings(); 
         }
         
@@ -64,11 +71,14 @@ public class RobotContainer {
                 () -> -driver_controller.getLeftX(),
                 () -> -driver_controller.getLeftY()
         ));
+        //[TEMP] going to the amp is the left bumper
+        driver_controller.leftBumper().whileTrue(new ToAmpCommand(swerveSubsystem, sensorsSubsystem));
 
         manipulator.a().onTrue(intakeSubsystem.toggleIntake());
         manipulator.b().onTrue(new ShooterMaxCommand(shooterSubsystem));
-        
+                
     }
+
     /*
     public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
    return new SequentialCommandGroup(

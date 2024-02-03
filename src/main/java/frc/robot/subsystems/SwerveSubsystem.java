@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.sql.Driver;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -14,9 +15,16 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
+import frc.robot.subsystems.SensorsSubsystem;
+
+
 public class SwerveSubsystem extends SubsystemBase {
+
+    private final SensorsSubsystem sensorsSubsystem = new SensorsSubsystem();
+
 
     private final SwerveModule frontLeft = new SwerveModule(
             DriveConstants.kFrontLeftDriveMotorPort,
@@ -124,6 +132,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
+        String error1 = " " + sensorsSubsystem.getDistance();
+        String error2 = " " + sensorsSubsystem.getLeftDistance();
+        String error3 = " " + sensorsSubsystem.getRightDistance();
+        //DriverStation.reportWarning(error1, false);
+        DriverStation.reportWarning(error2, false);
+        //DriverStation.reportWarning(error3, false);
         //Applying Brake Multiplier
         desiredStates[0].speedMetersPerSecond *= (1.05 - brakeFunction.get());
         desiredStates[1].speedMetersPerSecond *= (1.05 - brakeFunction.get());

@@ -100,6 +100,12 @@ public final class Constants {
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
     }
 
+        public static final class SensorConstants {
+            public static final int lidarID1 = 30;
+            public static final int lidarID2 = 31;
+        }
+
+
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
         public static final double kMaxAngularSpeedRadiansPerSecond =
