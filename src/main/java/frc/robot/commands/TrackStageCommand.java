@@ -2,11 +2,8 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -17,8 +14,6 @@ public class TrackStageCommand extends Command {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction;
-        private final AHRS gyro = new AHRS(SPI.Port.kMXP);
-
 
     public TrackStageCommand(SwerveSubsystem swerveSubsystem,
     Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction) {
@@ -38,7 +33,7 @@ public class TrackStageCommand extends Command {
         double xSpeed = xSpdFunction.get();
         double ySpeed = 0;
         double turningSpeed = 0;
-        double angle = swerveSubsystem.getHeading() % 360;
+        //double angle = swerveSubsystem.getHeading() % 360;
 
         //Set kps
         double KpDistance = 0.3;

@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -12,7 +11,7 @@ import frc.robot.Constants;
 public class RotaterSubsystem extends SubsystemBase{
      
     public static CANSparkMax rotater = new CANSparkMax(Constants.SparkIDs.rotaterID, MotorType.kBrushless);
-    public static RelativeEncoder rotaterEncoder;
+    public static RelativeEncoder rotaterEncoder = rotater.getEncoder();
     
     public enum RotaterState{
         SHOOT,

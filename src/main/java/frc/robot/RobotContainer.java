@@ -23,6 +23,7 @@ import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LifterCommand;
 import frc.robot.commands.ShooterCommand;
+import frc.robot.commands.ShooterLifterCommand;
 import frc.robot.commands.ShooterMaxCommand;
 import frc.robot.commands.ToAmpCommand;
 import frc.robot.commands.ToSpeakerCommand;
@@ -31,7 +32,9 @@ import frc.robot.commands.TrackRingCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LifterSubsystem;
+import frc.robot.subsystems.RotaterSubsystem;
 import frc.robot.subsystems.SensorsSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
@@ -41,6 +44,8 @@ public class RobotContainer {
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final SensorsSubsystem sensorsSubsystem = new SensorsSubsystem();
     private final LifterSubsystem lifterSubsystem = new LifterSubsystem();
+    private final RotaterSubsystem rotaterSubsystem = new RotaterSubsystem();
+    private final ShooterLifterSubsystem shooterLifterSubsystem = new ShooterLifterSubsystem();
     
 
     CommandXboxController driver_controller = new CommandXboxController(0);
@@ -62,6 +67,8 @@ public class RobotContainer {
                 //intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem, () -> 1));
                 
                 lifterSubsystem.setDefaultCommand(new LifterCommand(lifterSubsystem, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
+                
+                shooterLifterSubsystem.setDefaultCommand(new ShooterLifterCommand(shooterLifterSubsystem, () -> manipulator.getRawAxis(3), ()-> manipulator.getRawAxis(2)));
 
                 sensorsSubsystem.setRangeMode("Long");
                 configureButtonBindings(); 

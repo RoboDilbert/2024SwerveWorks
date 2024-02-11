@@ -79,7 +79,11 @@ public class ShooterSubsystem extends SubsystemBase{
     public void coast(){
     }
 
-    public static void stop(){
+    public double getPosition(){
+        return (shooterMotor1_Encoder.getPosition() + shooterMotor2_Encoder.getPosition()) / 2;
+    }
+
+    public void stop(){
         //ShooterSubsystem.shooterMotor.stopMotor();
         //ShooterSubsystem.shooterMotor2.stopMotor();
     }

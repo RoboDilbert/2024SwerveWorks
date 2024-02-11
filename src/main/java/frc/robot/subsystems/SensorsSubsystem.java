@@ -94,9 +94,9 @@ public class SensorsSubsystem extends SubsystemBase{
    }
 
    public void periodic() {
-       double leftFlightSensor = lidar1.getRange();
-       double rightFlightSensor = lidar2.getRange();
-       double avgDistance = (leftFlightSensor + rightFlightSensor)/2;
+       //double leftFlightSensor = lidar1.getRange();
+       //double rightFlightSensor = lidar2.getRange();
+       //double avgDistance = (leftFlightSensor + rightFlightSensor)/2;
        
        
        //SmartDashboard.putNumber("Left TOF", leftFlightSensor);

@@ -25,17 +25,28 @@ public class FeedCommand extends Command{
 
     public void execute(){
         if(m_rotaterSubsystem.rotaterState == RotaterState.SHOOT){
-            
+            if(m_rotaterSubsystem.getPosition() < 1000 || m_rotaterSubsystem.getPosition() > 2000){
+                if(m_rotaterSubsystem.getPosition() < 1000){
+                    m_rotaterSubsystem.run(.5);
+                }
+                else if(m_rotaterSubsystem.getPosition() > 2000){
+                    m_rotaterSubsystem.run(-.5);
+                }
+            }
+            if(m_rotaterSubsystem.getPosition() > 1000 && m_rotaterSubsystem.getPosition() < 2000){
+                m_rotaterSubsystem.rotaterState = RotaterState.INTAKE;
+            }
         }
-        if(m_intakeSubsystem.getState() == IntakeState.OFF){
+        if(m_rotaterSubsystem.rotaterState == RotaterState.INTAKE){
             m_intakeSubsystem.intakeState = IntakeState.FEED;
             m_intakeSubsystem.run(1);
             m_shooterSubsystem.feed(() -> 1);
-        }
-        if(m_shooterSubsystem.shooterSensor1.getRange() == 5){
-            m_intakeSubsystem.intakeState = IntakeState.OFF;
-            m_intakeSubsystem.stop();
-            m_shooterSubsystem.feedStop();
+            if(m_shooterSubsystem.shooterSensor1.getRange() == 5){
+                m_intakeSubsystem.intakeState = IntakeState.OFF;
+                m_intakeSubsystem.stop();
+                m_shooterSubsystem.feedStop();
+                m_rotaterSubsystem.rotaterState = RotaterState.SHOOT;
+            }
         }
     }
 
