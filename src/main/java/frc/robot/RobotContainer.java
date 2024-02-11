@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -19,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.LifterCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterMaxCommand;
 import frc.robot.commands.ToAmpCommand;
@@ -27,6 +30,7 @@ import frc.robot.commands.TrackSpeakerCommand;
 import frc.robot.commands.TrackRingCommand;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LifterSubsystem;
 import frc.robot.subsystems.SensorsSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -36,6 +40,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     private final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final SensorsSubsystem sensorsSubsystem = new SensorsSubsystem();
+    private final LifterSubsystem lifterSubsystem = new LifterSubsystem();
     
 
     CommandXboxController driver_controller = new CommandXboxController(0);
@@ -50,9 +55,13 @@ public class RobotContainer {
                         () -> true
                 ));
                 
-                shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
+                /*shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
                         () -> manipulator.getLeftY()
-                ));
+                ));*/
+
+                //intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem, () -> 1));
+                
+                lifterSubsystem.setDefaultCommand(new LifterCommand(lifterSubsystem, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
 
                 sensorsSubsystem.setRangeMode("Long");
                 configureButtonBindings(); 
@@ -71,11 +80,18 @@ public class RobotContainer {
                 () -> -driver_controller.getLeftX(),
                 () -> -driver_controller.getLeftY()
         ));
+
         //[TEMP] going to the amp is the left bumper
         driver_controller.leftBumper().whileTrue(new ToAmpCommand(swerveSubsystem, sensorsSubsystem));
 
+        driver_controller.rightBumper().whileTrue(new TrackSpeakerCommand(swerveSubsystem, 
+                () -> -driver_controller.getLeftX(), null
+        ));
+
         manipulator.a().onTrue(intakeSubsystem.toggleIntake());
         manipulator.b().onTrue(new ShooterMaxCommand(shooterSubsystem));
+
+        DriverStation.reportError("Intake State: " + intakeSubsystem.intakeState, true);
                 
     }
 

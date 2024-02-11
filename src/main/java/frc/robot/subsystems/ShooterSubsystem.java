@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,16 +15,23 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private CANSparkMax shooterMotor1;
     private CANSparkMax shooterMotor2;
+    private CANSparkMax shooterFeeder1;
+    private CANSparkMax shooterFeeder2;
     private SparkPIDController shooterMotor1_PidController;
     private SparkPIDController shooterMotor2_PidController;
     private RelativeEncoder shooterMotor1_Encoder;
     private RelativeEncoder shooterMotor2_Encoder;
+    public TimeOfFlight shooterSensor1 = new TimeOfFlight(Constants.SensorConstants.shooterSensor1ID);
+    public TimeOfFlight shooterSensor2 = new TimeOfFlight(Constants.SensorConstants.shooterSensor2ID);
 
     private final double MAX_RPM = 5000;
 
     public ShooterSubsystem(){
         shooterMotor1 = new CANSparkMax(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
         shooterMotor2 = new CANSparkMax(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
+
+        shooterFeeder1 = new CANSparkMax(Constants.SparkIDs.shooterFeeder1ID, MotorType.kBrushless);
+        shooterFeeder2 = new CANSparkMax(Constants.SparkIDs.shooterFeeder2ID, MotorType.kBrushless);
 
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2.restoreFactoryDefaults();
@@ -56,6 +64,16 @@ public class ShooterSubsystem extends SubsystemBase{
     public void maxSpeed(){
         shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
         shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+    }
+
+    public void feed(DoubleSupplier speed){
+        shooterFeeder1.set(speed.getAsDouble());
+        shooterFeeder2.set(-speed.getAsDouble());
+    }
+
+    public void feedStop(){
+        shooterFeeder1.stopMotor();
+        shooterFeeder2.stopMotor();
     }
 
     public void coast(){

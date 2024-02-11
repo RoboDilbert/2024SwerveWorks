@@ -8,11 +8,22 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public class SparkIDs{
-        public static final int shooter1SparkID = 18;
-        public static final int shooter2SparkID = 17;
+        public static final int shooter1SparkID = 17;
+        public static final int shooter2SparkID = 18;
 
-        public static final int intake1SparkID = 19;
-        public static final int intake2SparkID = 20;
+        public static final int intake1SparkID = 9;
+        public static final int intake2SparkID = 10;
+
+        public static final int shooterLifter1ID = 15;
+        public static final int shooterLifter2ID = 16;
+
+        public static final int lifter1ID = 19;
+        public static final int lifter2ID = 20;
+
+        public static final int shooterFeeder1ID = 13;
+        public static final int shooterFeeder2ID = 14;
+
+        public static final int rotaterID = 11;
     }
 
     public class PID{
@@ -75,20 +86,25 @@ public final class Constants {
         public static final boolean kFrontRightDriveEncoderReversed = true;
         public static final boolean kBackRightDriveEncoderReversed = true;
 
-        public static final int kFrontLeftDriveAbsoluteEncoderPort = 9;
-        public static final int kBackLeftDriveAbsoluteEncoderPort = 12;
-        public static final int kFrontRightDriveAbsoluteEncoderPort = 10;
-        public static final int kBackRightDriveAbsoluteEncoderPort = 11;
+        public static final int kFrontLeftDriveAbsoluteEncoderPort = 12;
+        public static final int kBackLeftDriveAbsoluteEncoderPort = 11;
+        public static final int kFrontRightDriveAbsoluteEncoderPort = 9;
+        public static final int kBackRightDriveAbsoluteEncoderPort = 10;
 
         public static final boolean kFrontLeftDriveAbsoluteEncoderReversed = true;
         public static final boolean kBackLeftDriveAbsoluteEncoderReversed = true;
         public static final boolean kFrontRightDriveAbsoluteEncoderReversed = true;
         public static final boolean kBackRightDriveAbsoluteEncoderReversed = true;
-        
-        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(119.437+90);
-        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(130.219+90); 
-        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(42.781+90);
-        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(19.543+90);
+
+        public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(311);
+        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(20.5); 
+        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(122);
+        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(226.5);
+
+        /*public static final double kFrontLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(301.932 + - 290);
+        public static final double kBackLeftDriveAbsoluteEncoderOffsetRad = Math.toRadians(235.94292 - 210 ); 
+        public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(42.36336 + 245 +(2* Math.PI));
+        public static final double kBackRightDriveAbsoluteEncoderOffsetRad = Math.toRadians(35.94744 + 144.25 -180);*/
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 1 * Math.PI;
@@ -100,10 +116,16 @@ public final class Constants {
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
     }
 
-        public static final class SensorConstants {
-            public static final int lidarID1 = 30;
-            public static final int lidarID2 = 31;
-        }
+    public static final class SensorConstants {
+        public static final int lidarID1 = 30;
+        public static final int lidarID2 = 31;
+
+        public static final int intake1ID = 32;
+        public static final int intake2ID = 33;
+
+        public static final int shooterSensor1ID = 34;
+        public static final int shooterSensor2ID = 35;
+    }
 
 
     public static final class AutoConstants {
