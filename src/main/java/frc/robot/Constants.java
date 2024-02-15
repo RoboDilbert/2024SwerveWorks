@@ -28,14 +28,14 @@ public final class Constants {
 
     public class PID{
         //PID Coefficients
-        public static final double kP = 5e-4;
-        public static final double kI = 5e-6;
+        public static final double kP = .000125;
+        public static final double kI = 0;
         public static final double kD = 0;
         public static final double kIz = 0;
         public static final double kFF = 0.0000156;
         public static final double kMaxOutput = 1;
         public static final double kMinOutput = -1;
-        public static final double maxRPM = 5700;
+        public static final double maxRPM = 6800;
 
         //Smart Motion Coefficeints
         public static final double maxVel = 2000; //rpm
@@ -153,5 +153,10 @@ public final class Constants {
         public static final int kDriverFieldOrientedButtonIdx = 1;
 
         public static final double kDeadband = 0.05;
+    }
+
+    public static final class TeleOpConstants {
+        public static final double kRotaterIntakePosition = -19.50;
+        public static final double kSubShootPosition = -10.00;
     }
 }

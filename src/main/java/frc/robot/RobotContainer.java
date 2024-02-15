@@ -22,6 +22,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LifterCommand;
+import frc.robot.commands.RotaterIntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterLifterCommand;
 import frc.robot.commands.ShooterMaxCommand;
@@ -60,11 +61,12 @@ public class RobotContainer {
                         () -> true
                 ));
                 
-                /*shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
-                        () -> manipulator.getLeftY()
-                ));*/
+                shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
+                        () -> 0,
+                        () -> manipulator.getRightX()
+                ));
 
-                //intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem, () -> 1));
+                rotaterSubsystem.setDefaultCommand(new RotaterIntakeCommand(rotaterSubsystem, () -> manipulator.getLeftX()));
                 
                 lifterSubsystem.setDefaultCommand(new LifterCommand(lifterSubsystem, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
                 
@@ -96,7 +98,7 @@ public class RobotContainer {
         ));
 
         manipulator.a().onTrue(intakeSubsystem.toggleIntake());
-        manipulator.b().onTrue(new ShooterMaxCommand(shooterSubsystem));
+        manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem, rotaterSubsystem, () -> manipulator.getRightX()));
 
         DriverStation.reportError("Intake State: " + intakeSubsystem.intakeState, true);
                 

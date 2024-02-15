@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
+
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -13,8 +15,8 @@ import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase{
 
-    private CANSparkMax shooterMotor1;
-    private CANSparkMax shooterMotor2;
+    private CANSparkFlex shooterMotor1;
+    private CANSparkFlex shooterMotor2;
     private CANSparkMax shooterFeeder1;
     private CANSparkMax shooterFeeder2;
     private SparkPIDController shooterMotor1_PidController;
@@ -27,8 +29,8 @@ public class ShooterSubsystem extends SubsystemBase{
     private final double MAX_RPM = 5000;
 
     public ShooterSubsystem(){
-        shooterMotor1 = new CANSparkMax(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
-        shooterMotor2 = new CANSparkMax(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
+        shooterMotor1 = new CANSparkFlex(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
+        shooterMotor2 = new CANSparkFlex(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
 
         shooterFeeder1 = new CANSparkMax(Constants.SparkIDs.shooterFeeder1ID, MotorType.kBrushless);
         shooterFeeder2 = new CANSparkMax(Constants.SparkIDs.shooterFeeder2ID, MotorType.kBrushless);
@@ -57,13 +59,13 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void run(DoubleSupplier speed){
-        shooterMotor1_PidController.setReference(-speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor2_PidController.setReference(speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor1_PidController.setReference(speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor2_PidController.setReference(-speed.getAsDouble() * MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
     }
 
     public void maxSpeed(){
-        shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor1_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor2_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
     }
 
     public void feed(DoubleSupplier speed){
@@ -77,6 +79,8 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void coast(){
+        shooterMotor1.stopMotor();
+        shooterMotor2.stopMotor();
     }
 
     public double getPosition(){

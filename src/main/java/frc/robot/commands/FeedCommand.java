@@ -24,7 +24,7 @@ public class FeedCommand extends Command{
     }
 
     public void execute(){
-        if(m_rotaterSubsystem.rotaterState == RotaterState.SHOOT){
+        /*if(m_rotaterSubsystem.rotaterState == RotaterState.SHOOT){
             if(m_rotaterSubsystem.getPosition() < 1000 || m_rotaterSubsystem.getPosition() > 2000){
                 if(m_rotaterSubsystem.getPosition() < 1000){
                     m_rotaterSubsystem.run(.5);
@@ -47,7 +47,7 @@ public class FeedCommand extends Command{
                 m_shooterSubsystem.feedStop();
                 m_rotaterSubsystem.rotaterState = RotaterState.SHOOT;
             }
-        }
+        }*/
     }
 
     public boolean isFinished(){
