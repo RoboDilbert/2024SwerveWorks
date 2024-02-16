@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.commands.FeederCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LifterCommand;
-import frc.robot.commands.RotaterIntakeCommand;
+import frc.robot.commands.RotaterCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.ShooterLifterCommand;
 import frc.robot.commands.ShooterMaxCommand;
@@ -31,6 +32,7 @@ import frc.robot.commands.ToSpeakerCommand;
 import frc.robot.commands.TrackSpeakerCommand;
 import frc.robot.commands.TrackRingCommand;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LifterSubsystem;
 import frc.robot.subsystems.RotaterSubsystem;
@@ -46,6 +48,7 @@ public class RobotContainer {
     private final SensorsSubsystem sensorsSubsystem = new SensorsSubsystem();
     private final LifterSubsystem lifterSubsystem = new LifterSubsystem();
     private final RotaterSubsystem rotaterSubsystem = new RotaterSubsystem();
+    private final FeederSubsystem feederSubsystem = new FeederSubsystem();
     private final ShooterLifterSubsystem shooterLifterSubsystem = new ShooterLifterSubsystem();
     
 
@@ -62,11 +65,14 @@ public class RobotContainer {
                 ));
                 
                 shooterSubsystem.setDefaultCommand(new ShooterCommand(shooterSubsystem, 
-                        () -> 0,
-                        () -> manipulator.getRightX()
+                        () -> 0
                 ));
+                
+                feederSubsystem.setDefaultCommand(new FeederCommand(feederSubsystem));
 
-                rotaterSubsystem.setDefaultCommand(new RotaterIntakeCommand(rotaterSubsystem, () -> manipulator.getLeftX()));
+                rotaterSubsystem.setDefaultCommand(new RotaterCommand(rotaterSubsystem));
+
+                intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem));
                 
                 lifterSubsystem.setDefaultCommand(new LifterCommand(lifterSubsystem, () -> manipulator.getLeftY(), () -> manipulator.getRightY()));
                 
@@ -89,19 +95,26 @@ public class RobotContainer {
                 () -> -driver_controller.getLeftX(),
                 () -> -driver_controller.getLeftY()
         ));
-
         //[TEMP] going to the amp is the left bumper
         driver_controller.leftBumper().whileTrue(new ToAmpCommand(swerveSubsystem, sensorsSubsystem));
-
         driver_controller.rightBumper().whileTrue(new TrackSpeakerCommand(swerveSubsystem, 
                 () -> -driver_controller.getLeftX(), null
         ));
 
-        manipulator.a().onTrue(intakeSubsystem.toggleIntake());
-        manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem, rotaterSubsystem, () -> manipulator.getRightX()));
 
-        DriverStation.reportError("Intake State: " + intakeSubsystem.intakeState, true);
-                
+
+        manipulator.a().onTrue(intakeSubsystem.toggleIntake());
+        manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem));
+        manipulator.y().onTrue(new InstantCommand(rotaterSubsystem::resetPosition));
+        manipulator.x().onTrue(feederSubsystem.back());
+
+        manipulator.pov(270).onTrue(new InstantCommand(shooterSubsystem::setSub));
+        manipulator.pov(0).onTrue(new InstantCommand(shooterSubsystem::setLine));
+        manipulator.pov(90).onTrue(new InstantCommand(shooterSubsystem::setStage));
+        manipulator.pov(180).onTrue(feederSubsystem.shootUpOBlock());
+
+
+        DriverStation.reportError("Intake State: " + IntakeSubsystem.intakeState, true);
     }
 
     /*

@@ -5,6 +5,7 @@ import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,13 +21,13 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public static boolean intake = false;
 
-    public enum IntakeState{
+    public static enum IntakeState{
         OFF,
         INTAKE,
         FEED
     }
 
-    public IntakeState intakeState = IntakeState.OFF;
+    public static IntakeState intakeState = IntakeState.OFF;
     
     public IntakeSubsystem(){
         intakeMotor.restoreFactoryDefaults();
@@ -48,29 +49,28 @@ public class IntakeSubsystem extends SubsystemBase{
     }
 
     public double getDistance() {
-        return (intakeSensor1.getRange() + intakeSensor2.getRange()) / 2;
+        return intakeSensor1.getRange();
     }
-
-    public Command toggleIntake() {
-        return runOnce(
-            () -> {
-                if(intakeState == IntakeState.OFF){
-                    intakeState = IntakeState.INTAKE;
-                    run(1);
-                }
-                else if(intakeState == IntakeState.INTAKE){
-                    intakeState = IntakeState.OFF;
-                    stop();
-                }
-            });
-      }
 
     public void stop(){
         IntakeSubsystem.intakeMotor.stopMotor();
         IntakeSubsystem.intakeMotor2.stopMotor();
     }
+
+    public Command toggleIntake() {
+        return runOnce(
+            () -> {
+                if(IntakeSubsystem.intakeState == IntakeState.OFF){
+                    IntakeSubsystem.intakeState = IntakeState.INTAKE;
+                }
+                else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
+                    IntakeSubsystem.intakeState = IntakeState.OFF;
+                }
+            });
+      }
     
     public void periodic(){
-
+        SmartDashboard.putString("Intake State: ", "" + IntakeSubsystem.intakeState);
+        SmartDashboard.putNumber("Intake Sensor: ", intakeSensor1.getRange());
     }
 }

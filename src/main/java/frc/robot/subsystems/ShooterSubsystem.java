@@ -3,22 +3,22 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
 
 public class ShooterSubsystem extends SubsystemBase{
 
     private CANSparkFlex shooterMotor1;
     private CANSparkFlex shooterMotor2;
-    private CANSparkMax shooterFeeder1;
-    private CANSparkMax shooterFeeder2;
     private SparkPIDController shooterMotor1_PidController;
     private SparkPIDController shooterMotor2_PidController;
     private RelativeEncoder shooterMotor1_Encoder;
@@ -28,12 +28,17 @@ public class ShooterSubsystem extends SubsystemBase{
 
     private final double MAX_RPM = 5000;
 
+    public static enum ShooterState{
+        SUB,
+        LINE,
+        STAGE
+    }
+
+    public static ShooterState shooterState = ShooterState.SUB;
+
     public ShooterSubsystem(){
         shooterMotor1 = new CANSparkFlex(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
         shooterMotor2 = new CANSparkFlex(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
-
-        shooterFeeder1 = new CANSparkMax(Constants.SparkIDs.shooterFeeder1ID, MotorType.kBrushless);
-        shooterFeeder2 = new CANSparkMax(Constants.SparkIDs.shooterFeeder2ID, MotorType.kBrushless);
 
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2.restoreFactoryDefaults();
@@ -68,16 +73,6 @@ public class ShooterSubsystem extends SubsystemBase{
         shooterMotor2_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
     }
 
-    public void feed(DoubleSupplier speed){
-        shooterFeeder1.set(speed.getAsDouble());
-        shooterFeeder2.set(-speed.getAsDouble());
-    }
-
-    public void feedStop(){
-        shooterFeeder1.stopMotor();
-        shooterFeeder2.stopMotor();
-    }
-
     public void coast(){
         shooterMotor1.stopMotor();
         shooterMotor2.stopMotor();
@@ -87,12 +82,33 @@ public class ShooterSubsystem extends SubsystemBase{
         return (shooterMotor1_Encoder.getPosition() + shooterMotor2_Encoder.getPosition()) / 2;
     }
 
+    public void setSub(){
+        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
+            RotaterSubsystem.rotaterState = RotaterState.SHOOT;
+        }
+        shooterState = ShooterState.SUB;
+    }
+
+    public void setLine(){
+        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
+            RotaterSubsystem.rotaterState = RotaterState.SHOOT;
+        }
+        shooterState = ShooterState.LINE;
+    }
+
+    public void setStage(){
+        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
+            RotaterSubsystem.rotaterState = RotaterState.SHOOT;
+        }
+        shooterState = ShooterState.STAGE;
+    }
+
     public void stop(){
         //ShooterSubsystem.shooterMotor.stopMotor();
         //ShooterSubsystem.shooterMotor2.stopMotor();
     }
     
     public void periodic(){
-        
+          SmartDashboard.putString("Shooter State: ", "" + ShooterSubsystem.shooterState);
     }
 }

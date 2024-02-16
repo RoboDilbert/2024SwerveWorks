@@ -120,10 +120,10 @@ public final class Constants {
         public static final int lidarID1 = 30;
         public static final int lidarID2 = 31;
 
-        public static final int intake1ID = 32;
+        public static final int intake1ID = 34;
         public static final int intake2ID = 33;
 
-        public static final int shooterSensor1ID = 34;
+        public static final int shooterSensor1ID = 32;
         public static final int shooterSensor2ID = 35;
     }
 
@@ -156,7 +156,9 @@ public final class Constants {
     }
 
     public static final class TeleOpConstants {
-        public static final double kRotaterIntakePosition = -19.50;
-        public static final double kSubShootPosition = -10.00;
+        public static final double kRotaterIntakePosition = 10.26;
+        public static final double kSubShootPosition = 20;
+        public static final double kLineShootPosition = 16;
+        public static final double kStageShootPosition = 2;
     }
 }

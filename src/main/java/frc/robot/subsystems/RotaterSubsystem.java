@@ -1,16 +1,9 @@
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,30 +11,47 @@ import frc.robot.Constants;
 public class RotaterSubsystem extends SubsystemBase{
      
     public static CANSparkMax rotater = new CANSparkMax(Constants.SparkIDs.rotaterID, MotorType.kBrushless);
-    public static RelativeEncoder rotaterAbsoluteEncoder = rotater.getEncoder();
+    public static RelativeEncoder rotaterEncoder = rotater.getEncoder();
 
-    public enum RotaterState{
-        SHOOT,
-        INTAKE
+    public static enum RotaterState{
+        INTAKE,
+        SHOOT
     }
 
-    public RotaterState rotaterState = RotaterState.SHOOT;
+    public static RotaterState rotaterState = RotaterState.INTAKE;
 
     public RotaterSubsystem(){
         rotater.restoreFactoryDefaults();
         rotater.setIdleMode(IdleMode.kBrake);
         rotater.setSmartCurrentLimit(20);
     }
+
+    public RotaterState getRotaterState(){
+        return rotaterState;
+    }
     
     public double getPosition(){
-        return rotaterAbsoluteEncoder.getPosition();
+        return rotaterEncoder.getPosition();
+    }
+
+    public void toPosition(double position){
+        double power = (((getPosition() - position) / -15));
+        if(Math.abs(power) > 0.2){
+            power = 0.2 * Math.signum(power);
+        }
+        run(power);
     }
 
     public void run(double power){
         rotater.set(power);
     }
     
+    public void resetPosition(){
+        rotaterEncoder.setPosition(0);
+    }
+
     public void periodic(){
-        SmartDashboard.putNumber("Encoder: ", rotaterAbsoluteEncoder.getPosition());
+        SmartDashboard.putNumber("Encoder: ", rotaterEncoder.getPosition());
+        SmartDashboard.putString("Rotater State: ", "" + RotaterSubsystem.rotaterState);
     }
 }

@@ -1,8 +1,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.RotaterSubsystem;
+import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
+import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
 public class IntakeCommand extends Command{
 
@@ -14,15 +18,27 @@ public class IntakeCommand extends Command{
     }
 
     public void initialize(){
+        
     }
 
     public void execute(){
-        if(m_intakeSubsystem.getState() == IntakeState.INTAKE){
-            if(m_intakeSubsystem.getDistance() == 100){
-                m_intakeSubsystem.intakeState = IntakeState.OFF;
-                m_intakeSubsystem.stop();
+        if(IntakeSubsystem.intakeState == IntakeState.OFF){
+            m_intakeSubsystem.run(0);
+        }
+        else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
+            RotaterSubsystem.rotaterState = RotaterState.INTAKE;
+            IntakeSubsystem.intakeState = IntakeState.INTAKE;
+            FeederSubsystem.feederState = FeederState.FEED;
+            m_intakeSubsystem.run(.75);
+            if(m_intakeSubsystem.getDistance() < 40){
+                m_intakeSubsystem.run(0);
+                FeederSubsystem.feederState = FeederState.OFF;
+                IntakeSubsystem.intakeState = IntakeState.OFF;
             }
         }
+    }
+
+    public void end(){
     }
 
     public boolean isFinished(){
