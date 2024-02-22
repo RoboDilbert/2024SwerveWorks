@@ -36,6 +36,9 @@ public class IntakeCommand extends Command{
                 IntakeSubsystem.intakeState = IntakeState.OFF;
             }
         }
+        else if(IntakeSubsystem.intakeState == IntakeState.REVERSE){
+            m_intakeSubsystem.run(-1);
+        }
     }
 
     public void end(){

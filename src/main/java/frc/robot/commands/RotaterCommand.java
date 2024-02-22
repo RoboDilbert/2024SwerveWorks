@@ -36,6 +36,12 @@ public class RotaterCommand extends Command{
             }
             
         }
+        else if(RotaterSubsystem.rotaterState == RotaterState.RESET){
+            m_rotaterSubsystem.run(-.25);
+            if(m_rotaterSubsystem.getPosition() == 0){
+                RotaterSubsystem.rotaterState = RotaterState.INTAKE;
+            }
+        }
     }
 
     public boolean isFinished(){

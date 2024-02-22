@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.FeederSubsystem.FeederState;
 
 
 public class IntakeSubsystem extends SubsystemBase{
@@ -24,7 +25,8 @@ public class IntakeSubsystem extends SubsystemBase{
     public static enum IntakeState{
         OFF,
         INTAKE,
-        FEED
+        FEED,
+        REVERSE
     }
 
     public static IntakeState intakeState = IntakeState.OFF;
@@ -60,14 +62,27 @@ public class IntakeSubsystem extends SubsystemBase{
     public Command toggleIntake() {
         return runOnce(
             () -> {
-                if(IntakeSubsystem.intakeState == IntakeState.OFF){
+                if(IntakeSubsystem.intakeState == IntakeState.OFF || IntakeSubsystem.intakeState == IntakeState.REVERSE){
                     IntakeSubsystem.intakeState = IntakeState.INTAKE;
                 }
                 else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
                     IntakeSubsystem.intakeState = IntakeState.OFF;
+                    FeederSubsystem.feederState = FeederState.OFF;
                 }
             });
       }
+
+    public Command reverse(){
+        return runOnce(
+            () -> {
+                if(IntakeSubsystem.intakeState == IntakeState.OFF || IntakeSubsystem.intakeState == IntakeState.INTAKE){
+                    IntakeSubsystem.intakeState = IntakeState.REVERSE;     
+                }
+                else if(IntakeSubsystem.intakeState == IntakeState.REVERSE){
+                    IntakeSubsystem.intakeState = IntakeState.OFF;
+                }
+            });
+    }
     
     public void periodic(){
         SmartDashboard.putString("Intake State: ", "" + IntakeSubsystem.intakeState);

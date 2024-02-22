@@ -5,8 +5,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.FeederSubsystem.FeederState;
 
 public class RotaterSubsystem extends SubsystemBase{
      
@@ -15,7 +17,8 @@ public class RotaterSubsystem extends SubsystemBase{
 
     public static enum RotaterState{
         INTAKE,
-        SHOOT
+        SHOOT,
+        RESET
     }
 
     public static RotaterState rotaterState = RotaterState.INTAKE;
@@ -35,9 +38,9 @@ public class RotaterSubsystem extends SubsystemBase{
     }
 
     public void toPosition(double position){
-        double power = (((getPosition() - position) / -15));
-        if(Math.abs(power) > 0.2){
-            power = 0.2 * Math.signum(power);
+        double power = ((((getPosition() - position) / -15) - 0.05));
+        if(Math.abs(power) > 0.25){
+            power = 0.25 * Math.signum(power);
         }
         run(power);
     }
@@ -48,6 +51,10 @@ public class RotaterSubsystem extends SubsystemBase{
     
     public void resetPosition(){
         rotaterEncoder.setPosition(0);
+    }
+
+    public Command reset(){
+        return runOnce(() -> RotaterSubsystem.rotaterState = RotaterState.RESET);
     }
 
     public void periodic(){

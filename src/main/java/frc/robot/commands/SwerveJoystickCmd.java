@@ -16,6 +16,8 @@ public class SwerveJoystickCmd extends Command {
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, brakeFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final SlewRateLimiter turningLimiter;
+    private ChassisSpeeds chassisSpeeds;
+
 
     public SwerveJoystickCmd(SwerveSubsystem swerveSubsystem,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
@@ -52,7 +54,6 @@ public class SwerveJoystickCmd extends Command {
         ySpeed = Math.abs(ySpeed)*ySpeed;
         
         //Construct desired chassis speeds
-        ChassisSpeeds chassisSpeeds;
         if (fieldOrientedFunction.get()) {
             // Relative to field
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -68,6 +69,10 @@ public class SwerveJoystickCmd extends Command {
 
         //Output each module states to wheels
         swerveSubsystem.setModuleStates(moduleStates, brakeFunction);
+    }
+
+    public ChassisSpeeds getCurrentSpeeds(){
+        return chassisSpeeds;
     }
 
     @Override

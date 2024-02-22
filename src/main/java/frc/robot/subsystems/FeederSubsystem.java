@@ -22,7 +22,8 @@ public class FeederSubsystem extends SubsystemBase{
         OFF,
         FEED,
         BACK,
-        SHOOT
+        SHOOT,
+        AMP
     }
 
     public static FeederState feederState = FeederState.OFF;
@@ -54,6 +55,10 @@ public class FeederSubsystem extends SubsystemBase{
 
     public Command shootUpOBlock(){
         return runOnce(() -> feederState = FeederState.SHOOT);
+    }
+
+    public Command shootUpAmp(){
+        return runOnce(() -> feederState = FeederState.AMP);
     }
 
     public void periodic(){

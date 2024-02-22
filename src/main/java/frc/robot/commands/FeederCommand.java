@@ -10,13 +10,15 @@ public class FeederCommand extends Command{
 
     private boolean backSpin;
     private boolean shoot;
-    private double initialPos;
+    private double initialPosBack;
+    private double initialPosShoot;
 
     public FeederCommand(FeederSubsystem feed){
         m_feederSubsystem = feed;
         backSpin = false;
         shoot = false;
-        initialPos = 0;
+        initialPosBack = 0;
+        initialPosShoot = 0;
         addRequirements(feed);
     }
 
@@ -33,11 +35,12 @@ public class FeederCommand extends Command{
         else if(FeederSubsystem.feederState == FeederState.BACK){
             if(!backSpin){
                 backSpin = true;
-                initialPos = m_feederSubsystem.getFeederPosition();
-                m_feederSubsystem.feed(() -> .25);
+                initialPosBack = m_feederSubsystem.getFeederPosition();
+                m_feederSubsystem.feed(() -> .125);
             }
             if(backSpin){
-                if(m_feederSubsystem.getFeederPosition() > initialPos + 5){
+                m_feederSubsystem.feed(() -> .125);
+                if(m_feederSubsystem.getFeederPosition() > initialPosBack + 5){
                     backSpin = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
@@ -47,11 +50,26 @@ public class FeederCommand extends Command{
         else if(FeederSubsystem.feederState == FeederState.SHOOT){
             if(!shoot){
                 shoot = true;
-                initialPos = m_feederSubsystem.getFeederPosition();
+                initialPosShoot = m_feederSubsystem.getFeederPosition();
                 m_feederSubsystem.feed(() -> -1);
             }
             if(shoot){
-                if(m_feederSubsystem.getFeederPosition() < initialPos - 200){
+                m_feederSubsystem.feed(() -> -1);
+                if(m_feederSubsystem.getFeederPosition() < initialPosShoot - 200){
+                    shoot = false;
+                    m_feederSubsystem.feed(() -> 0);
+                    FeederSubsystem.feederState = FeederState.OFF;
+                }
+            }
+        }
+        else if(FeederSubsystem.feederState == FeederState.AMP){
+            if(!shoot){
+                shoot = true;
+                initialPosShoot = m_feederSubsystem.getFeederPosition();
+                m_feederSubsystem.feed(() -> 1);
+            }
+            if(shoot){
+                if(m_feederSubsystem.getFeederPosition() > initialPosShoot + 500){
                     shoot = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;

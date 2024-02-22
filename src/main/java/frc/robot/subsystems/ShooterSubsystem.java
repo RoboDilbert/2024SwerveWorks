@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.playingwithfusion.TimeOfFlight;
@@ -12,13 +13,14 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
 
 public class ShooterSubsystem extends SubsystemBase{
 
     private CANSparkFlex shooterMotor1;
-    private CANSparkFlex shooterMotor2;
+    private CANSparkMax shooterMotor2;
     private SparkPIDController shooterMotor1_PidController;
     private SparkPIDController shooterMotor2_PidController;
     private RelativeEncoder shooterMotor1_Encoder;
@@ -26,7 +28,7 @@ public class ShooterSubsystem extends SubsystemBase{
     public TimeOfFlight shooterSensor1 = new TimeOfFlight(Constants.SensorConstants.shooterSensor1ID);
     public TimeOfFlight shooterSensor2 = new TimeOfFlight(Constants.SensorConstants.shooterSensor2ID);
 
-    private final double MAX_RPM = 5000;
+    private final double MAX_RPM = 5800;
 
     public static enum ShooterState{
         SUB,
@@ -38,7 +40,7 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public ShooterSubsystem(){
         shooterMotor1 = new CANSparkFlex(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
-        shooterMotor2 = new CANSparkFlex(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
+        shooterMotor2 = new CANSparkMax(Constants.SparkIDs.shooter2SparkID, MotorType.kBrushless);
 
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2.restoreFactoryDefaults();
@@ -69,8 +71,8 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void maxSpeed(){
-        shooterMotor1_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor2_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
     }
 
     public void coast(){
