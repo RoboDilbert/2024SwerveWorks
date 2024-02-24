@@ -168,12 +168,12 @@ public final class Constants {
         public static final double kAngleDistanceMultiplier = 20;   // Angle and Distance Directly Related                                                                                  
         public static final double kAngleSpeedMultiplier = -20;     // Angle and Speed Inversely Relatedd
         
-        public static final double kGearRatio = 20;                 // Gear ratio
+        public static final double kGearRatio = 2/9;                 // Gear ratio 80/360 = 2/9
 
         public static final double kIdleSpeed = 20;                 // Idle Speed
-        public static final double kHorizontalAngle = 20;           // Horizontal Angle 
+        public static final double kHorizontalAngle = 1;           // Horizontal Angle 
 
-        public static final double kVerticalAngle = 100;            // Vertical Angle     
+        public static final double kVerticalAngle = 18;            // Vertical Angle     
         public static final double maxPower = 5800;                 // Max Power       
     }
 }

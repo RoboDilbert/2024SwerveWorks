@@ -121,10 +121,15 @@ public class RobotContainer {
         manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem));
         manipulator.y().onTrue(new InstantCommand(rotaterSubsystem::resetPosition));
         manipulator.x().onTrue(feederSubsystem.back());
+        
+        
 
         manipulator.pov(270).onTrue(new InstantCommand(shooterSubsystem::setSub));
         manipulator.pov(0).onTrue(new InstantCommand(shooterSubsystem::setLine));
         manipulator.pov(90).onTrue(new InstantCommand(shooterSubsystem::setStage));
+        manipulator.leftBumper().onTrue(new InstantCommand(shooterSubsystem::setAuto));
+
+
         if(FeederSubsystem.feederState != FeederState.FEED){
                 manipulator.pov(180).onTrue(feederSubsystem.shootUpOBlock());
         }

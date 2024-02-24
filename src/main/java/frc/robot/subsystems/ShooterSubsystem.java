@@ -33,7 +33,8 @@ public class ShooterSubsystem extends SubsystemBase{
     public static enum ShooterState{
         SUB,
         LINE,
-        STAGE
+        STAGE,
+        AUTO
     }
 
     public static ShooterState shooterState = ShooterState.SUB;
@@ -103,6 +104,10 @@ public class ShooterSubsystem extends SubsystemBase{
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
         }
         shooterState = ShooterState.STAGE;
+    }
+
+    public void setAuto(){
+        shooterState = ShooterState.AUTO;
     }
 
     public void stop(){
