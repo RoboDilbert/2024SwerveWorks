@@ -17,6 +17,7 @@ public class RotaterSubsystem extends SubsystemBase{
     public static enum RotaterState{
         INTAKE,
         SHOOT,
+        AUTO_SHOOT,
         RESET
     }
 
