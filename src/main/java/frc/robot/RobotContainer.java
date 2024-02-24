@@ -61,7 +61,7 @@ public class RobotContainer {
                 
                 feederSubsystem.setDefaultCommand(new FeederCommand(feederSubsystem));
 
-                //rotaterSubsystem.setDefaultCommand(new RotaterCommand(rotaterSubsystem));
+                rotaterSubsystem.setDefaultCommand(new RotaterCommand(rotaterSubsystem));
 
                 intakeSubsystem.setDefaultCommand(new IntakeCommand(intakeSubsystem));
                 
@@ -109,15 +109,15 @@ public class RobotContainer {
         manipulator.pov(270).onTrue(new InstantCommand(shooterSubsystem::setSub));
         manipulator.pov(0).onTrue(new InstantCommand(shooterSubsystem::setLine));
         manipulator.pov(90).onTrue(new InstantCommand(shooterSubsystem::setStage));
-        manipulator.leftBumper().onTrue(new InstantCommand(shooterSubsystem::setAuto));
 
-
+        
+        manipulator.button(7).onTrue(new InstantCommand(rotaterSubsystem::setAuto));
+        
         if(FeederSubsystem.feederState != FeederState.FEED){
                 manipulator.pov(180).onTrue(feederSubsystem.shootUpOBlock());
         }
 
         manipulator.leftBumper().onTrue(feederSubsystem.shootUpAmp());
-
 
         DriverStation.reportError("Intake State: " + IntakeSubsystem.intakeState, true);
     }

@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
@@ -11,10 +12,11 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 public class RotaterCommand extends Command{
 
     private final RotaterSubsystem m_rotaterSubsystem;
-    public double angle;
+    private double angle;
 
     public RotaterCommand(RotaterSubsystem rotater){
         m_rotaterSubsystem = rotater;
+        angle = 0;
         addRequirements(rotater);
     }
 
@@ -23,9 +25,8 @@ public class RotaterCommand extends Command{
     }
 
     public double evalAngle() {
-        angle = Constants.ShooterConstants.kHorizontalAngle;
         LimelightHelpers.setPipelineIndex("limelight", 0);
-        angle += Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53);                 // *APRIL_TAG_VALUE
+        angle = Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53);                 // *APRIL_TAG_VALUE
         //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
         //angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
         return angle;
@@ -40,6 +41,9 @@ public class RotaterCommand extends Command{
     }
 
     public void execute(){
+
+        SmartDashboard.putNumber("Auto Angle", evalAngle());
+
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
@@ -52,10 +56,7 @@ public class RotaterCommand extends Command{
             }
             else if(ShooterSubsystem.shooterState == ShooterState.STAGE){
                 m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kStageShootPosition);
-            } else if(ShooterSubsystem.shooterState == ShooterState.AUTO){
-                m_rotaterSubsystem.toPosition(evalAngle());
             }
-            
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.RESET){
             m_rotaterSubsystem.run(-.25);
@@ -63,7 +64,9 @@ public class RotaterCommand extends Command{
                 RotaterSubsystem.rotaterState = RotaterState.INTAKE;
             }
         }
-
+        else if(RotaterSubsystem.rotaterState == RotaterState.AUTO){
+                m_rotaterSubsystem.toPosition(evalAngle());
+            }
     }
 
     public boolean isFinished(){

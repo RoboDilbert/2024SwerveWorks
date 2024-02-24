@@ -17,7 +17,7 @@ public class RotaterSubsystem extends SubsystemBase{
     public static enum RotaterState{
         INTAKE,
         SHOOT,
-        AUTO_SHOOT,
+        AUTO,
         RESET
     }
 
@@ -51,6 +51,10 @@ public class RotaterSubsystem extends SubsystemBase{
     
     public void resetPosition(){
         rotaterEncoder.setPosition(0);
+    }
+
+    public void setAuto(){
+        RotaterSubsystem.rotaterState = RotaterState.AUTO;
     }
 
     public Command reset(){
