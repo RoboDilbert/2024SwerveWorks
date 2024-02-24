@@ -30,7 +30,7 @@ public class ShooterCommand extends Command{
     }
 
     public boolean arnav(){
-        return true;
+        return false;
     }
     
 }
