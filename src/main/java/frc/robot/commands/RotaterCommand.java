@@ -10,6 +10,7 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 public class RotaterCommand extends Command{
 
     private final RotaterSubsystem m_rotaterSubsystem;
+    public double angle;
 
     public RotaterCommand(RotaterSubsystem rotater){
         m_rotaterSubsystem = rotater;
@@ -41,6 +42,28 @@ public class RotaterCommand extends Command{
             if(m_rotaterSubsystem.getPosition() == 0){
                 RotaterSubsystem.rotaterState = RotaterState.INTAKE;
             }
+        }
+    }
+
+    public double evalAngle() {
+        angle = Constants.ShooterConstants.kHorizontalAngle;
+        angle += Constants.ShooterConstants.kGearRatio;                 // *APRIL_TAG_VALUE
+        angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
+        angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
+        return angle;
+    }
+
+    public boolean angleReasonable() {
+        if(angle < Constants.ShooterConstants.kVerticalAngle) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public void execute_auto_shooting(){
+        if(angleReasonable()){
+            m_rotaterSubsystem.toPosition(angle);
         }
     }
 
