@@ -136,6 +136,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        //PathPlannerPath path = PathPlannerPath.fromPathFIle("Multiple Points");
         PathPlannerPath path = PathPlannerPath.fromPathFile("path1");
 
         return AutoBuilder.followPath(path);
