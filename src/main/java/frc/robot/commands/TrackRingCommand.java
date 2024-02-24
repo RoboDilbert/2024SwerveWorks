@@ -24,7 +24,7 @@ public class TrackRingCommand extends Command {
 
     @Override
     public void initialize() {
-        LimelightHelpers.setPipelineIndex("limelight", 1);
+        LimelightHelpers.setPipelineIndex("limelight", 4);
     }
 
     @Override

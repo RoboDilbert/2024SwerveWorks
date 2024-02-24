@@ -24,7 +24,7 @@ public class TrackStageCommand extends Command {
 
     @Override
     public void initialize() {
-        LimelightHelpers.setPipelineIndex("limelight", 0);
+        LimelightHelpers.setPipelineIndex("limelight", 2);
     }
 
     @Override

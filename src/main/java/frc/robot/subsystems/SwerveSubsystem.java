@@ -6,7 +6,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -66,7 +64,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private final SwerveDriveOdometry odometer;
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
-    private SwerveModuleState[] moduleStates;    
+    private SwerveModuleState[] moduleStates = new SwerveModuleState[4]; 
 
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
@@ -74,6 +72,11 @@ public class SwerveSubsystem extends SubsystemBase {
         modulePosition[2] = new SwerveModulePosition(backLeft.getDrivePosition(), backLeft.getState().angle);
         modulePosition[3] = new SwerveModulePosition(backRight.getDrivePosition(), backRight.getState().angle);
         
+        moduleStates[0] = new SwerveModuleState(frontLeft.getDriveVelocity(), frontLeft.getState().angle);
+        moduleStates[1] = new SwerveModuleState(frontRight.getDriveVelocity(), frontLeft.getState().angle);
+        moduleStates[2] = new SwerveModuleState(backLeft.getDriveVelocity(), frontLeft.getState().angle);
+        moduleStates[3] = new SwerveModuleState(backRight.getDriveVelocity(), frontLeft.getState().angle);
+
         odometer = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics,
         new Rotation2d(0), modulePosition);
 
@@ -86,7 +89,6 @@ public class SwerveSubsystem extends SubsystemBase {
         }).start();
 
         configurePathPlanner();
-
     }
 
     public void zeroHeading() {
@@ -109,9 +111,22 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.resetPosition(getRotation2d(), modulePosition, pose);
     }
 
+    public void updateStates(SwerveModuleState[] moduleStatessss){
+        moduleStatessss[0].speedMetersPerSecond = frontLeft.getDriveVelocity();
+        moduleStatessss[1].speedMetersPerSecond = frontRight.getDriveVelocity();
+        moduleStatessss[2].speedMetersPerSecond = backLeft.getDriveVelocity();
+        moduleStatessss[3].speedMetersPerSecond = backRight.getDriveVelocity();
+
+        moduleStatessss[0].angle = frontLeft.getState().angle;
+        moduleStatessss[1].angle = frontRight.getState().angle;
+        moduleStatessss[2].angle = backLeft.getState().angle;
+        moduleStatessss[3].angle = backRight.getState().angle;
+    }
+
     @Override
     public void periodic() {
         odometer.update(getRotation2d(), modulePosition);
+        updateStates(moduleStates);
         SmartDashboard.putNumber("Robot Heading", getHeading());
         SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     }
@@ -149,9 +164,6 @@ public class SwerveSubsystem extends SubsystemBase {
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
     }
-
-
-
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
 
@@ -202,9 +214,9 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getCurrentRobotChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
-                    4.5, // Max module speed, in m/s
+                    new PIDConstants(0.001, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.001, 0.0, 0.0), // Rotation PID constants
+                    0.5, // Max module speed, in m/s
                     0.4, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
