@@ -28,5 +28,9 @@ public class ShooterCommand extends Command{
     public boolean isFinished(){
         return false;
     }
+
+    public boolean arnav(){
+        return true;
+    }
     
 }
