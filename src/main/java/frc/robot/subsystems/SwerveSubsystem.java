@@ -179,14 +179,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
-        //String error1 = " " + sensorsSubsystem.getDistance();
-        //String error2 = " " + sensorsSubsystem.getLeftDistance();
-        //String error3 = " " + sensorsSubsystem.getRightDistance();
-        //DriverStation.reportWarning(error1, false);
-        //DriverStation.reportWarning(error2, false);
-        //DriverStation.reportWarning(error3, false);
-        //Applying Brake Multiplier
-
         desiredStates[0].speedMetersPerSecond *= (1.2 - brakeFunction.get());
         desiredStates[1].speedMetersPerSecond *= (1.2 - brakeFunction.get());
         desiredStates[2].speedMetersPerSecond *= (1.2 - brakeFunction.get());

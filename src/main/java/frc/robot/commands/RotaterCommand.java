@@ -43,6 +43,7 @@ public class RotaterCommand extends Command{
     public void execute(){
 
         SmartDashboard.putNumber("Auto Angle", evalAngle());
+        SmartDashboard.putNumber("Limelight Value", LimelightHelpers.getTY("limelight") + 53);
 
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
@@ -65,8 +66,8 @@ public class RotaterCommand extends Command{
             }
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.AUTO){
-                m_rotaterSubsystem.toPosition(evalAngle());
-            }
+            m_rotaterSubsystem.toPosition(evalAngle());
+        }
     }
 
     public boolean isFinished(){
