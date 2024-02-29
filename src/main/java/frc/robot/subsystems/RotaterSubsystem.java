@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.FeederSubsystem.FeederState;
 
 public class RotaterSubsystem extends SubsystemBase{
      
@@ -18,6 +17,7 @@ public class RotaterSubsystem extends SubsystemBase{
     public static enum RotaterState{
         INTAKE,
         SHOOT,
+        AUTO,
         RESET
     }
 
@@ -51,6 +51,10 @@ public class RotaterSubsystem extends SubsystemBase{
     
     public void resetPosition(){
         rotaterEncoder.setPosition(0);
+    }
+
+    public void setAuto(){
+        RotaterSubsystem.rotaterState = RotaterState.AUTO;
     }
 
     public Command reset(){

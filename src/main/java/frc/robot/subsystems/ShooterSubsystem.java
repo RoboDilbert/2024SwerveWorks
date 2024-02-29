@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
 
@@ -104,6 +103,7 @@ public class ShooterSubsystem extends SubsystemBase{
         }
         shooterState = ShooterState.STAGE;
     }
+
 
     public void stop(){
         //ShooterSubsystem.shooterMotor.stopMotor();

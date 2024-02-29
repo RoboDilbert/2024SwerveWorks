@@ -23,7 +23,7 @@ public class ToAmpCommand extends Command {
 
     @Override
     public void initialize() {
-        LimelightHelpers.setPipelineIndex("limelight", 0);
+        LimelightHelpers.setPipelineIndex("limelight", 1);
     }
 
     @Override
