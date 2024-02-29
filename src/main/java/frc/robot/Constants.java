@@ -134,9 +134,9 @@ public final class Constants {
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = .5;
-        public static final double kPYController = .5;
-        public static final double kPThetaController = .7;
+        public static final double kPXController = 1;
+        public static final double kPYController = 1;
+        public static final double kPThetaController = .25;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
@@ -168,7 +168,7 @@ public final class Constants {
         public static final double kAngleDistanceMultiplier = 20;   // Angle and Distance Directly Related                                                                                  
         public static final double kAngleSpeedMultiplier = -20;     // Angle and Speed Inversely Relatedd
         
-        public static final double kGearRatio = 2.0/9.0;                 // Gear ratio 80/360 = 2/9
+        public static final double kGearRatio = 5.0/9.0;                 // Gear ratio 80/360 = 2/9
 
         public static final double kIdleSpeed = 20;                 // Idle Speed
         public static final double kHorizontalAngle = 1;           // Horizontal Angle 
