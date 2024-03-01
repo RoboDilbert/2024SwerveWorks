@@ -28,7 +28,7 @@ public class ShooterMaxCommand extends Command{
     }
 
     public boolean isFinished(){
-        return false;
+        return true;
     }
     
 }

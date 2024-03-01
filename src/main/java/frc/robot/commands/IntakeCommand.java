@@ -26,7 +26,6 @@ public class IntakeCommand extends Command{
             m_intakeSubsystem.run(0);
         }
         else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
-            RotaterSubsystem.rotaterState = RotaterState.INTAKE;
             IntakeSubsystem.intakeState = IntakeState.INTAKE;
             FeederSubsystem.feederState = FeederState.FEED;
             m_intakeSubsystem.run(.75);

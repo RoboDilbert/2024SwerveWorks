@@ -5,7 +5,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.LimelightHelpers;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -53,6 +55,8 @@ public class SwerveJoystickCmd extends Command {
         xSpeed = Math.abs(xSpeed)*xSpeed;
         ySpeed = Math.abs(ySpeed)*ySpeed;
         
+        SmartDashboard.putNumber("Limelight Z", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ());
+
         //Construct desired chassis speeds
         if (fieldOrientedFunction.get()) {
             // Relative to field
