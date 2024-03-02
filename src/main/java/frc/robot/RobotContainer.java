@@ -86,6 +86,7 @@ public class RobotContainer {
                 autoChooser.setDefaultOption("mid", mid);
                 autoChooser.addOption("left",  left);
                 autoChooser.addOption("right", right);
+                autoChooser.addOption("right2", right2ring);
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -146,13 +147,13 @@ public class RobotContainer {
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.4, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.4, 0, true, 0),
                 new WaitCommand(3),
                 intakeSubsystem.toggleIntake()
                 //new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem)
         );
         SequentialCommandGroup left = new SequentialCommandGroup(
-                        
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 1.5, false, -60)
         );
         SequentialCommandGroup right = new SequentialCommandGroup(
                 new ShooterMaxCommand(shooterSubsystem),
@@ -160,7 +161,20 @@ public class RobotContainer {
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, -60),
                 new WaitCommand(5)
+        );
+        SequentialCommandGroup right2ring = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(-60),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(2.5),
+                feederSubsystem.feedPlease(),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, 0),
+                new WaitCommand(2),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2, 0.2, false, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0.2, false, 0),
+                new WaitCommand(2)
         );
 }

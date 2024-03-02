@@ -18,6 +18,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -66,6 +67,8 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
     private SwerveModuleState[] moduleStates = new SwerveModuleState[4]; 
 
+    public static double gyroAngleAuto = 0;
+
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
         modulePosition[1] = new SwerveModulePosition(frontRight.getDrivePosition(), frontRight.getState().angle);
@@ -103,6 +106,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
+    }
+
+    public Command setStaticHeading(double offset){
+        return runOnce(() -> SwerveSubsystem.gyroAngleAuto = getHeading() - offset);
     }
 
     public Pose2d getPose() {

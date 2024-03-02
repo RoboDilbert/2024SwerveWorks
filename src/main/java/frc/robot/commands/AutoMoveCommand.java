@@ -19,19 +19,24 @@ public class AutoMoveCommand extends Command {
     private final RotaterSubsystem rotaterSubsystem;
     private double desiredX;
     private double desiredY;
+    private boolean straight;
 
     private double xDistance;
     private double yDistance;
     private double angle;
 
+    private boolean offset = true;
     private double gyroOffset;
+    private double startOffset;
+    private double adjustedHeading;
 
-    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, double x, double y) {
+    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, double x, double y, boolean straight, double offset) {
         this.swerveSubsystem = swerveSubsystem;
         this.rotaterSubsystem = rotaterSubsystem;
         desiredX = x;
         desiredY = y;
-        gyroOffset = swerveSubsystem.getHeading();
+        startOffset = offset;
+        this.straight = straight;
         addRequirements(swerveSubsystem);
     }
 
@@ -45,37 +50,51 @@ public class AutoMoveCommand extends Command {
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
+
         //Figure out distance and angle to apriltag
         double xSpeed = 0;
         double ySpeed = 0;
-        double heading = swerveSubsystem.getHeading() - gyroOffset;
+        adjustedHeading = swerveSubsystem.getHeading() - SwerveSubsystem.gyroAngleAuto;
         angle = 0;
-        double kPturning = 0.5;
-        double kPdistance = 0.5;
+        double kPturning = 0.25;
+        double kPX = 0.5;
+        double kPY = 0.5;
 
-        //yDistance = ((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ()) * Math.tan(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX())) + desiredY;
+        if(straight){
+            yDistance = 0;
+            angle = 0;
+        }
+        else{
+            yDistance = ((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ()) * Math.tan(Math.toRadians((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX()) + adjustedHeading))) + desiredY;
+            
+            //yDistance = 0;
+            angle = -kPturning * (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
+        }
+
         xDistance = (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ()) - desiredX;
 
-        //Set turning speed and y speed based off of apriltag
-        //angle = -kPturning * (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
-        xSpeed = kPdistance * xDistance;
-        ySpeed = kPdistance * yDistance;
+        xSpeed = kPX * xDistance;
+        ySpeed = kPY * yDistance;
 
         SmartDashboard.putNumber("pre y", ySpeed);
+        SmartDashboard.putNumber("pre x", xSpeed);
         SmartDashboard.putNumber("rotate", angle);
-        SmartDashboard.putNumber("auto heading", heading);
+        SmartDashboard.putNumber("heading", adjustedHeading);
+        SmartDashboard.putNumber("offset", SwerveSubsystem.gyroAngleAuto);
+        SmartDashboard.putNumber("corrected angle", ((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX()) + adjustedHeading));
 
-        if(Math.abs(xSpeed) > .3){
-            xSpeed = .3 * Math.signum(xSpeed);
+        if(Math.abs(xSpeed) > .2){
+            xSpeed = .2 * Math.signum(xSpeed);
         }
-        if(Math.abs(ySpeed) > .1){
-            ySpeed = .1 * Math.signum(ySpeed);
+        if(Math.abs(ySpeed) > .15){
+            ySpeed = .15 * Math.signum(ySpeed);
         }
         if(Math.abs(angle) > .3){
-            ySpeed = .3 * Math.signum(ySpeed);
+            angle = .3 * Math.signum(ySpeed);
         }
 
         SmartDashboard.putNumber("y", ySpeed);
+
         //Set speeds to chassis
         ChassisSpeeds chassisSpeeds;
         chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, angle);
@@ -94,7 +113,8 @@ public class AutoMoveCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        if(Math.abs(xDistance) < .01 && Math.abs(yDistance) < .01 && Math.abs(angle) < .01){
+        if(Math.abs(xDistance) < .05 && Math.abs(yDistance) < .05 && Math.abs(angle) < .05){
+            SwerveSubsystem.gyroAngleAuto = adjustedHeading;
             return true;
         }
         return false;
