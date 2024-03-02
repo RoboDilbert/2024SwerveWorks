@@ -114,7 +114,6 @@ public class AutoMoveCommand extends Command {
     @Override
     public boolean isFinished() {
         if(Math.abs(xDistance) < .05 && Math.abs(yDistance) < .05 && Math.abs(angle) < .05){
-            SwerveSubsystem.gyroAngleAuto = adjustedHeading;
             return true;
         }
         return false;

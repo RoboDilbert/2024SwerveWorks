@@ -156,16 +156,17 @@ public class RobotContainer {
                 new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 1.5, false, -60)
         );
         SequentialCommandGroup right = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(-60),
                 new ShooterMaxCommand(shooterSubsystem),
                 new WaitCommand(2.5),
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, -60),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, 0),
                 new WaitCommand(5)
         );
         SequentialCommandGroup right2ring = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(-60),
+                swerveSubsystem.setStaticHeading(0),
                 new ShooterMaxCommand(shooterSubsystem),
                 new WaitCommand(2.5),
                 feederSubsystem.feedPlease(),
@@ -174,7 +175,10 @@ public class RobotContainer {
                 new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, 0),
                 new WaitCommand(2),
                 new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2, 0.2, false, 0),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0.2, false, 0),
-                new WaitCommand(2)
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0, false, 0),
+                new WaitCommand(2),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.75, -1.3, false, 0),
+                new WaitCommand(2),
+                intakeSubsystem.toggleIntake()
         );
 }

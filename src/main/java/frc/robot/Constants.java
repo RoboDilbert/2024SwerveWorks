@@ -156,7 +156,7 @@ public final class Constants {
     }
 
     public static final class TeleOpConstants {
-        public static final double kRotaterIntakePosition = 29;
+        public static final double kRotaterIntakePosition = 28.75;
         public static final double kSubShootPosition = 31;
         public static final double kLineShootPosition = 23;
         public static final double kStageShootPosition = 10;
