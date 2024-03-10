@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
@@ -35,7 +36,14 @@ public class ShooterSubsystem extends SubsystemBase{
         STAGE
     }
 
+    public static enum ShooterSpeedState{
+        OFF,
+        MAX
+    }
+
     public static ShooterState shooterState = ShooterState.SUB;
+
+    public static ShooterSpeedState speedState = ShooterSpeedState.OFF;
 
     public ShooterSubsystem(){
         shooterMotor1 = new CANSparkFlex(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
@@ -102,6 +110,18 @@ public class ShooterSubsystem extends SubsystemBase{
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
         }
         shooterState = ShooterState.STAGE;
+    }
+
+    public Command toggleShooter() {
+        return runOnce(
+            () -> {
+                if(ShooterSubsystem.speedState == ShooterSpeedState.OFF){
+                    ShooterSubsystem.speedState = ShooterSpeedState.MAX;
+                }
+                else if(ShooterSubsystem.speedState == ShooterSpeedState.MAX){
+                    ShooterSubsystem.speedState = ShooterSpeedState.OFF;
+                }
+            });
     }
 
 

@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import javax.xml.XMLConstants;
-
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,17 +23,13 @@ public class AutoMoveCommand extends Command {
     private double yDistance;
     private double angle;
 
-    private boolean offset = true;
-    private double gyroOffset;
-    private double startOffset;
     private double adjustedHeading;
 
-    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, double x, double y, boolean straight, double offset) {
+    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, double x, double y, boolean straight) {
         this.swerveSubsystem = swerveSubsystem;
         this.rotaterSubsystem = rotaterSubsystem;
         desiredX = x;
         desiredY = y;
-        startOffset = offset;
         this.straight = straight;
         addRequirements(swerveSubsystem);
     }

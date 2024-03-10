@@ -116,7 +116,7 @@ public class RobotContainer {
 
         manipulator.a().onTrue(intakeSubsystem.toggleIntake());
         manipulator.rightBumper().onTrue(intakeSubsystem.reverse());
-        manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem));
+        manipulator.b().onTrue(shooterSubsystem.toggleShooter());
         manipulator.y().onTrue(rotaterSubsystem.resetRotater());
         manipulator.x().onTrue(feederSubsystem.back());
 
@@ -147,22 +147,36 @@ public class RobotContainer {
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.4, 0, true, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.4, 0, true),
                 new WaitCommand(3),
                 intakeSubsystem.toggleIntake()
                 //new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem)
         );
         SequentialCommandGroup left = new SequentialCommandGroup(
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 1.5, false, -60)
+                feederSubsystem.feedPlease(),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.5),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(5)
         );
         SequentialCommandGroup right = new SequentialCommandGroup(
                 swerveSubsystem.setStaticHeading(-60),
                 new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(2.5),
+                new WaitCommand(1),
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, 0),
+                new WaitCommand(.5),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.5),
+                feederSubsystem.feedPlease(),
                 new WaitCommand(5)
         );
         SequentialCommandGroup right2ring = new SequentialCommandGroup(
@@ -172,12 +186,12 @@ public class RobotContainer {
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.8, 1.3, false),
                 new WaitCommand(2),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2, 0.2, false, 0),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0, false, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2, 0.2, false),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.7, 0, false),
                 new WaitCommand(2),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.75, -1.3, false, 0),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, 2.75, -1.3, false),
                 new WaitCommand(2),
                 intakeSubsystem.toggleIntake()
         );

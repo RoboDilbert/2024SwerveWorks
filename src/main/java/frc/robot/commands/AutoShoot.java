@@ -23,6 +23,7 @@ public class AutoShoot extends Command{
     private boolean shooterSpin;
     private double initialPosBack;
     private double initialPosShoot;
+    private boolean endShoot;
     private boolean end;
     private double wait;
 
@@ -37,6 +38,7 @@ public class AutoShoot extends Command{
         shooterSpin = false;
         initialPosBack = 0;
         initialPosShoot = 0;
+        endShoot = false;
         wait = 0;
         end = false;
         addRequirements(feed);
@@ -46,10 +48,13 @@ public class AutoShoot extends Command{
     }
 
     public void execute(){
-        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
+        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE && !shooterSpin){
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
-        if(m_intakeSubsystem.getDistance() < 40){
+        else if(RotaterSubsystem.rotaterState == RotaterState.INTAKE && shooterSpin){
+            m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kStageShootPosition);
+        } 
+        if(m_intakeSubsystem.getDistance() < 40 && !shooterSpin){
             m_intakeSubsystem.run(0);
             FeederSubsystem.feederState = FeederState.BACK;
             IntakeSubsystem.intakeState = IntakeState.OFF;
@@ -69,33 +74,29 @@ public class AutoShoot extends Command{
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
                     shooterSpin = true;
-                    shoot = true;
                     m_shooterSubsystem.maxSpeed();
                 }
             }
         }
         if(FeederSubsystem.feederState == FeederState.OFF && shooterSpin){
-            m_shooterSubsystem.maxSpeed();
-            wait++;
-            SmartDashboard.putNumber("wait", wait);
-        }
-        if(FeederSubsystem.feederState == FeederState.OFF && wait > 10000){
-            if(!shoot){
-                shoot = true;
-                initialPosShoot = m_feederSubsystem.getFeederPosition();
-                m_feederSubsystem.feed(() -> -1);
+            wait+=1;
+        }/*
+        if(FeederSubsystem.feederState == FeederState.OFF && wait > 100 && !shoot){
+            shoot = true;
+            initialPosShoot = m_feederSubsystem.getFeederPosition();
+            m_feederSubsystem.feed(() -> -1);
+        }    
+        if(shoot){
+            m_feederSubsystem.feed(() -> -1);
+            if(m_feederSubsystem.getFeederPosition() < initialPosShoot - 200){
+                shoot = false;
+                m_feederSubsystem.feed(() -> 0);
+                FeederSubsystem.feederState = FeederState.OFF;
+                shooterSpin = false;
+                endShoot = true;
             }
-            if(shoot){
-                m_feederSubsystem.feed(() -> -1);
-                if(m_feederSubsystem.getFeederPosition() < initialPosShoot - 200){
-                    shoot = false;
-                    m_feederSubsystem.feed(() -> 0);
-                    FeederSubsystem.feederState = FeederState.OFF;
-                    shooterSpin = false;
-                }
-            }
-        }
-        if(FeederSubsystem.feederState == FeederState.OFF && wait > 100 && shoot == false && shooterSpin == false){
+        }/* */
+        if(FeederSubsystem.feederState == FeederState.OFF && wait > 100/* && shoot == false && shooterSpin == false && endShoot*/){
             m_shooterSubsystem.coast();
             end = true;
         }
