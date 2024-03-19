@@ -33,7 +33,8 @@ public class ShooterSubsystem extends SubsystemBase{
     public static enum ShooterState{
         SUB,
         LINE,
-        STAGE
+        STAGE,
+        AMP
     }
 
     public static enum ShooterSpeedState{
@@ -68,8 +69,8 @@ public class ShooterSubsystem extends SubsystemBase{
         shooterMotor2_PidController.setFF(Constants.PID.kFF);
         shooterMotor1_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
         shooterMotor2_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
-        shooterMotor1.setIdleMode(IdleMode.kCoast);
-        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor1.setIdleMode(IdleMode.kBrake);
+        shooterMotor2.setIdleMode(IdleMode.kBrake);
     }
 
     public void run(DoubleSupplier speed){
@@ -78,8 +79,10 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void maxSpeed(){
-        shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        //shooterMotor1_PidController.setReference(-(MAX_RPM - 1000), com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        //shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor1.set(-.6);
+        shooterMotor2.set(.8);
     }
 
     public void coast(){

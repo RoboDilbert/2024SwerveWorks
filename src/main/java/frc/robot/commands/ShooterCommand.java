@@ -35,6 +35,7 @@ public class ShooterCommand extends Command{
     }
 
     public void execute(){
+        
         if(ShooterSubsystem.speedState == ShooterSpeedState.OFF){
             m_shooterSubsystem.coast();
         }

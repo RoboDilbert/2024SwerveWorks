@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.RotaterSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -15,6 +16,8 @@ public class AutoMoveCommand extends Command {
 
     private final SwerveSubsystem swerveSubsystem;
     private final RotaterSubsystem rotaterSubsystem;
+    private final ShooterLifterSubsystem shooterLifterSubsystem;
+    
     private double desiredX;
     private double desiredY;
     private boolean straight;
@@ -25,9 +28,10 @@ public class AutoMoveCommand extends Command {
 
     private double adjustedHeading;
 
-    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, double x, double y, boolean straight) {
+    public AutoMoveCommand(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, ShooterLifterSubsystem shooterLifter, double x, double y, boolean straight) {
         this.swerveSubsystem = swerveSubsystem;
         this.rotaterSubsystem = rotaterSubsystem;
+        this.shooterLifterSubsystem = shooterLifter;
         desiredX = x;
         desiredY = y;
         this.straight = straight;
@@ -44,31 +48,38 @@ public class AutoMoveCommand extends Command {
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
+        
+        //shooterLifterSubsystem.toPosition(4.0);
 
         //Figure out distance and angle to apriltag
         double xSpeed = 0;
         double ySpeed = 0;
         adjustedHeading = swerveSubsystem.getHeading() - SwerveSubsystem.gyroAngleAuto;
         angle = 0;
-        double kPturning = 0.25;
+        double kPturning = 0.45;
         double kPX = 0.5;
         double kPY = 0.5;
 
         if(straight){
             yDistance = 0;
-            angle = 0;
         }
         else{
             yDistance = ((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ()) * Math.tan(Math.toRadians((LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX()) + adjustedHeading))) + desiredY;
             
             //yDistance = 0;
-            angle = -kPturning * (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
         }
 
         xDistance = (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ()) - desiredX;
+        angle = -kPturning * (LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
 
         xSpeed = kPX * xDistance;
         ySpeed = kPY * yDistance;
+
+        if(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ() == 0){
+            xSpeed = 0;
+            ySpeed = 0;
+            angle = 0;
+        }
 
         SmartDashboard.putNumber("pre y", ySpeed);
         SmartDashboard.putNumber("pre x", xSpeed);
@@ -107,7 +118,8 @@ public class AutoMoveCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        if(Math.abs(xDistance) < .05 && Math.abs(yDistance) < .05 && Math.abs(angle) < .05){
+        if(Math.abs(xDistance) < .15 && Math.abs(yDistance) < .15 && Math.abs(angle) < .15){
+            shooterLifterSubsystem.run(.05);
             return true;
         }
         return false;

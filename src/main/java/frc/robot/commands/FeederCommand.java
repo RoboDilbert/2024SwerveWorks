@@ -3,6 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterSpeedState;
 
 public class FeederCommand extends Command{
 
@@ -40,10 +42,11 @@ public class FeederCommand extends Command{
             }
             if(backSpin){
                 m_feederSubsystem.feed(() -> .125);
-                if(m_feederSubsystem.getFeederPosition() > initialPosBack + 5){
+                if(m_feederSubsystem.getFeederPosition() > initialPosBack){
                     backSpin = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
+                    shoot = false;
                 }
             }
         }
@@ -59,6 +62,7 @@ public class FeederCommand extends Command{
                     shoot = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
+                    ShooterSubsystem.speedState = ShooterSpeedState.OFF;
                 }
             }
         }
@@ -69,7 +73,7 @@ public class FeederCommand extends Command{
                 m_feederSubsystem.feed(() -> 1);
             }
             if(shoot){
-                if(m_feederSubsystem.getFeederPosition() > initialPosShoot + 500){
+                if(m_feederSubsystem.getFeederPosition() > initialPosShoot + 50){
                     shoot = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;

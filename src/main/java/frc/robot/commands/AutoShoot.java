@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.FeederSubsystem;
@@ -17,6 +16,8 @@ public class AutoShoot extends Command{
     private final ShooterSubsystem m_shooterSubsystem;
     private final IntakeSubsystem m_intakeSubsystem;
     private final RotaterSubsystem m_rotaterSubsystem;
+    private final double shootTimer;
+    private final double shooterPos;
 
     private boolean backSpin;
     private boolean shoot;
@@ -28,11 +29,13 @@ public class AutoShoot extends Command{
     private double wait;
 
 
-    public AutoShoot(FeederSubsystem feed, ShooterSubsystem shooter, IntakeSubsystem intake, RotaterSubsystem rotaterSubsystem){
+    public AutoShoot(FeederSubsystem feed, ShooterSubsystem shooter, IntakeSubsystem intake, RotaterSubsystem rotaterSubsystem, double shootTimer, double shooterPos){
         m_feederSubsystem = feed;
         m_shooterSubsystem = shooter;
         m_intakeSubsystem = intake;
         m_rotaterSubsystem = rotaterSubsystem;
+        this.shootTimer = shootTimer;
+        this.shooterPos = shooterPos;
         backSpin = false;
         shoot = false;
         shooterSpin = false;
@@ -52,9 +55,10 @@ public class AutoShoot extends Command{
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
         else if(RotaterSubsystem.rotaterState == RotaterState.INTAKE && shooterSpin){
-            m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kStageShootPosition);
+            m_rotaterSubsystem.toPosition(shooterPos);
         } 
-        if(m_intakeSubsystem.getDistance() < 40 && !shooterSpin){
+
+        if(m_intakeSubsystem.getDistance() < 45 && !shooterSpin){
             m_intakeSubsystem.run(0);
             FeederSubsystem.feederState = FeederState.BACK;
             IntakeSubsystem.intakeState = IntakeState.OFF;
@@ -69,7 +73,7 @@ public class AutoShoot extends Command{
             }
             if(backSpin){
                 m_feederSubsystem.feed(() -> .125);
-                if(m_feederSubsystem.getFeederPosition() > initialPosBack + 5){
+                if(m_feederSubsystem.getFeederPosition() > initialPosBack){
                     backSpin = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
@@ -78,16 +82,18 @@ public class AutoShoot extends Command{
                 }
             }
         }
-        if(FeederSubsystem.feederState == FeederState.OFF && shooterSpin){
+        if(FeederSubsystem.feederState == FeederState.OFF && shooterSpin && !shoot){
             wait+=1;
-        }/*
-        if(FeederSubsystem.feederState == FeederState.OFF && wait > 100 && !shoot){
+            m_shooterSubsystem.maxSpeed();
+        }
+        if(FeederSubsystem.feederState == FeederState.OFF && wait > shootTimer && !shoot){
             shoot = true;
             initialPosShoot = m_feederSubsystem.getFeederPosition();
             m_feederSubsystem.feed(() -> -1);
         }    
         if(shoot){
             m_feederSubsystem.feed(() -> -1);
+            m_shooterSubsystem.maxSpeed();
             if(m_feederSubsystem.getFeederPosition() < initialPosShoot - 200){
                 shoot = false;
                 m_feederSubsystem.feed(() -> 0);
@@ -95,8 +101,8 @@ public class AutoShoot extends Command{
                 shooterSpin = false;
                 endShoot = true;
             }
-        }/* */
-        if(FeederSubsystem.feederState == FeederState.OFF && wait > 100/* && shoot == false && shooterSpin == false && endShoot*/){
+        }
+        if(FeederSubsystem.feederState == FeederState.OFF && wait > shootTimer && shoot == false && endShoot){
             m_shooterSubsystem.coast();
             end = true;
         }

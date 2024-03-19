@@ -74,7 +74,6 @@ public class RotaterSubsystem extends SubsystemBase{
         return runOnce(
             () -> {
             RotaterSubsystem.rotaterState = RotaterState.INTAKE;
-            toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         });
     }
 

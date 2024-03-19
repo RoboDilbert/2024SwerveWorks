@@ -3,8 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
+import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 
 public class IntakeCommand extends Command{
 
@@ -26,10 +28,15 @@ public class IntakeCommand extends Command{
         else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
             IntakeSubsystem.intakeState = IntakeState.INTAKE;
             FeederSubsystem.feederState = FeederState.FEED;
-            m_intakeSubsystem.run(.75);
-            if(m_intakeSubsystem.getDistance() < 35){
+            if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.MANUAL){
+                m_intakeSubsystem.run(.75);
+            }
+            else{
                 m_intakeSubsystem.run(0);
-                FeederSubsystem.feederState = FeederState.OFF;
+            }
+            if(m_intakeSubsystem.getDistance() < 45){
+                m_intakeSubsystem.run(0);
+                FeederSubsystem.feederState = FeederState.BACK;
                 IntakeSubsystem.intakeState = IntakeState.OFF;
             }
         }

@@ -6,11 +6,11 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterSpeedState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
-public class ShooterMaxCommand extends Command{
+public class ShooterMaxCommandTeleop extends Command{
 
     private final ShooterSubsystem m_shooterSubsystem;
 
-    public ShooterMaxCommand(ShooterSubsystem shooter){
+    public ShooterMaxCommandTeleop(ShooterSubsystem shooter){
         m_shooterSubsystem = shooter;
         addRequirements(shooter);
     }
@@ -29,7 +29,7 @@ public class ShooterMaxCommand extends Command{
     }
 
     public boolean isFinished(){
-        return true;
+        return false;
     }
     
 }
