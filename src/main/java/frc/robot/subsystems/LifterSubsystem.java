@@ -5,6 +5,7 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -12,9 +13,12 @@ import frc.robot.Constants;
 
 public class LifterSubsystem extends SubsystemBase{
      
-    public static CANSparkMax lifter1 = new CANSparkMax(Constants.SparkIDs.lifter1ID, MotorType.kBrushless);
-    public static CANSparkMax lifter2 = new CANSparkMax(Constants.SparkIDs.lifter2ID, MotorType.kBrushless);
-    
+    public CANSparkMax lifter1 = new CANSparkMax(Constants.SparkIDs.lifter1ID, MotorType.kBrushless);
+    public CANSparkMax lifter2 = new CANSparkMax(Constants.SparkIDs.lifter2ID, MotorType.kBrushless);
+
+    public RelativeEncoder lifter1Encoder = lifter1.getEncoder();
+    public RelativeEncoder lifter2Encoder = lifter2.getEncoder();
+
     public LifterSubsystem(){
         lifter1.restoreFactoryDefaults();
         lifter1.setIdleMode(IdleMode.kBrake);
@@ -29,11 +33,27 @@ public class LifterSubsystem extends SubsystemBase{
         lifter2.set(-power2.getAsDouble());
     }
 
-    public static void stop(){
+    public void runOne(DoubleSupplier power){
+        lifter1.set(power.getAsDouble());
+    }
+
+    public void runTwo(DoubleSupplier power){
+        lifter2.set(-power.getAsDouble());
+    }
+
+    public void stop(){
         lifter1.stopMotor();
         lifter2.stopMotor();
     }
     
+    public double getOne(){
+        return lifter1Encoder.getPosition();
+    }
+
+    public double getTwo(){
+        return lifter2Encoder.getPosition();
+    }
+
     public void periodic(){
 
     }

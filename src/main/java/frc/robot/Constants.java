@@ -134,9 +134,9 @@ public final class Constants {
                 DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond;
         public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = .5;
-        public static final double kPYController = .5;
-        public static final double kPThetaController = .7;
+        public static final double kPXController = 1;
+        public static final double kPYController = 1;
+        public static final double kPThetaController = .25;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
@@ -156,10 +156,11 @@ public final class Constants {
     }
 
     public static final class TeleOpConstants {
-        public static final double kRotaterIntakePosition = 14;
-        public static final double kSubShootPosition = 19.5;
-        public static final double kLineShootPosition = 13;
-        public static final double kStageShootPosition = 5;
+        public static final double kRotaterIntakePosition = -13.8; //12.8
+        public static final double kSubShootPosition = -1;
+        public static final double kLineShootPosition = -38;
+        public static final double kStageShootPosition = -11.5;
+        public static final double kAmpShootPosition = -31;
     }
 
     public static final class ShooterConstants {
@@ -168,12 +169,12 @@ public final class Constants {
         public static final double kAngleDistanceMultiplier = 20;   // Angle and Distance Directly Related                                                                                  
         public static final double kAngleSpeedMultiplier = -20;     // Angle and Speed Inversely Relatedd
         
-        public static final double kGearRatio = 2/9;                 // Gear ratio 80/360 = 2/9
+        public static final double kGearRatio = 4.0/9.0;                 // Gear ratio 80/360 = 2/9
 
         public static final double kIdleSpeed = 20;                 // Idle Speed
-        public static final double kHorizontalAngle = 1;           // Horizontal Angle 
+        public static final double kHorizontalAngle = -30;           // Horizontal Angle 
 
-        public static final double kVerticalAngle = 18;            // Vertical Angle     
+        public static final double kVerticalAngle = -1;            // Vertical Angle     
         public static final double maxPower = 5800;                 // Max Power       
     }
 }

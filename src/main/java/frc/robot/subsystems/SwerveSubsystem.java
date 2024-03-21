@@ -22,9 +22,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.LimelightHelpers;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -70,8 +72,6 @@ public class SwerveSubsystem extends SubsystemBase {
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
     private SwerveModuleState[] moduleStates = new SwerveModuleState[4]; 
-    private final Pose2d initialPose;
-
 
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
@@ -84,8 +84,8 @@ public class SwerveSubsystem extends SubsystemBase {
         moduleStates[2] = new SwerveModuleState(backLeft.getDriveVelocity(), frontLeft.getState().angle);
         moduleStates[3] = new SwerveModuleState(backRight.getDriveVelocity(), frontLeft.getState().angle);
 
-        odometer = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics, new Rotation2d(0), modulePosition);
-        initialPose = new Pose2d();
+        odometer = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics,
+        new Rotation2d(0), modulePosition);
 
         new Thread(() -> {
             try {
@@ -94,6 +94,8 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
+
+        brake();
 
         configurePathPlanner();
     }
@@ -110,12 +112,34 @@ public class SwerveSubsystem extends SubsystemBase {
         return Rotation2d.fromDegrees(getHeading());
     }
 
+    public Command setStaticHeading(double offset){
+        return runOnce(() -> SwerveSubsystem.gyroAngleAuto = getHeading() - offset);
+    }
+
+
     public Pose2d getPose() {
+        SmartDashboard.putNumber("PoseX", odometer.getPoseMeters().getX());
+        SmartDashboard.putNumber("PoseY", odometer.getPoseMeters().getY());
+        SmartDashboard.putNumber("Rotation", odometer.getPoseMeters().getRotation().getDegrees());
         return odometer.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose) {
         odometer.resetPosition(getRotation2d(), modulePosition, pose);
+    }
+
+    public void brake(){
+        frontLeft.brake();
+        frontRight.brake();
+        backLeft.brake();
+        backRight.brake();
+    }
+
+    public void coast(){
+        frontLeft.coast();
+        frontRight.coast();
+        backLeft.coast();
+        backRight.coast();
     }
 
     public void updateStates(SwerveModuleState[] moduleStatessss){
@@ -128,6 +152,16 @@ public class SwerveSubsystem extends SubsystemBase {
         moduleStatessss[1].angle = frontRight.getState().angle;
         moduleStatessss[2].angle = backLeft.getState().angle;
         moduleStatessss[3].angle = backRight.getState().angle;
+
+        modulePosition[0].distanceMeters = frontLeft.getDrivePosition();
+        modulePosition[1].distanceMeters = frontRight.getDrivePosition();
+        modulePosition[2].distanceMeters = backLeft.getDrivePosition();
+        modulePosition[3].distanceMeters = backRight.getDrivePosition();
+
+        modulePosition[0].angle = frontLeft.getState().angle;
+        modulePosition[1].angle = frontRight.getState().angle;
+        modulePosition[2].angle = backLeft.getState().angle;
+        modulePosition[3].angle = backRight.getState().angle;
     }
 
     @Override
@@ -135,7 +169,7 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), modulePosition);
         updateStates(moduleStates);
         SmartDashboard.putNumber("Robot Heading", getHeading());
-        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+        //SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     }
 
     public void stopModules() {
@@ -179,8 +213,13 @@ public class SwerveSubsystem extends SubsystemBase {
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
                 throttle, strafe, rotation, 
                 // Sets an offset if robot path doesn't start facing drive station
-                Rotation2d.fromDegrees(getHeading()))
+                getPose().getRotation())
             : new ChassisSpeeds(throttle, strafe, rotation);
+
+        SmartDashboard.putNumber("throttle", throttle);
+        SmartDashboard.putNumber("strafe", strafe);
+        SmartDashboard.putNumber("rotation", rotation);
+
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
     }*/
@@ -206,14 +245,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
-        //String error1 = " " + sensorsSubsystem.getDistance();
-        //String error2 = " " + sensorsSubsystem.getLeftDistance();
-        //String error3 = " " + sensorsSubsystem.getRightDistance();
-        //DriverStation.reportWarning(error1, false);
-        //DriverStation.reportWarning(error2, false);
-        //DriverStation.reportWarning(error3, false);
-        //Applying Brake Multiplier
-
         desiredStates[0].speedMetersPerSecond *= (1.2 - brakeFunction.get());
         desiredStates[1].speedMetersPerSecond *= (1.2 - brakeFunction.get());
         desiredStates[2].speedMetersPerSecond *= (1.2 - brakeFunction.get());
@@ -231,6 +262,7 @@ public class SwerveSubsystem extends SubsystemBase {
     } 
 
     public ChassisSpeeds getChassisSpeed() {
+        SmartDashboard.putNumber("LeftFront", frontLeft.getState().speedMetersPerSecond);
         return Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(
             frontLeft.getState(),
             frontRight.getState(),
@@ -247,8 +279,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(0.001, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(0.001, 0.0, 0.0), // Rotation PID constants
+                    new PIDConstants(0.45, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(0.1, 0.0, 0.0), // Rotation PID constants
                     0.5, // Max module speed, in m/s
                     0.4, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here

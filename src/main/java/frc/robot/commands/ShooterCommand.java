@@ -3,17 +3,16 @@ package frc.robot.commands;
 import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.subsystems.ShooterSubsystem.ShooterSpeedState;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class ShooterCommand extends Command{
 
     private final ShooterSubsystem m_shooterSubsystem;
-    private final DoubleSupplier m_power;
     public double power = 0;
 
     public ShooterCommand(ShooterSubsystem shooter, DoubleSupplier power){
         m_shooterSubsystem = shooter;
-        m_power = power;
         addRequirements(shooter);
     }
 
@@ -36,10 +35,13 @@ public class ShooterCommand extends Command{
     }
 
     public void execute(){
-        if(Math.abs(m_power.getAsDouble()) > .1)
-            m_shooterSubsystem.run(m_power);
-        else
+        
+        if(ShooterSubsystem.speedState == ShooterSpeedState.OFF){
             m_shooterSubsystem.coast();
+        }
+        else if(ShooterSubsystem.speedState == ShooterSpeedState.MAX){
+            m_shooterSubsystem.maxSpeed();
+        }
     }
 
     public void execute_auto_shooting(){

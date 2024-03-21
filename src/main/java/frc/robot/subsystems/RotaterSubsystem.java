@@ -53,12 +53,28 @@ public class RotaterSubsystem extends SubsystemBase{
         rotaterEncoder.setPosition(0);
     }
 
+    public Command resetRotater(){
+        return runOnce(
+            () -> {
+                rotaterEncoder.setPosition(0);
+                RotaterSubsystem.rotaterState = RotaterState.INTAKE;
+            }
+        );
+    }
+
     public void setAuto(){
         RotaterSubsystem.rotaterState = RotaterState.AUTO;
     }
 
     public Command reset(){
         return runOnce(() -> RotaterSubsystem.rotaterState = RotaterState.RESET);
+    }
+
+    public Command autoIntake(){
+        return runOnce(
+            () -> {
+            RotaterSubsystem.rotaterState = RotaterState.INTAKE;
+        });
     }
 
     public void periodic(){

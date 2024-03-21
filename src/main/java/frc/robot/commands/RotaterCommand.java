@@ -26,7 +26,7 @@ public class RotaterCommand extends Command{
 
     public double evalAngle() {
         LimelightHelpers.setPipelineIndex("limelight", 0);
-        angle = Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53);                 // *APRIL_TAG_VALUE
+        angle = ((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53)) - 0.5) * .87;                 // *APRIL_TAG_VALUE
         //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
         //angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
         return angle;
@@ -43,11 +43,14 @@ public class RotaterCommand extends Command{
     public void execute(){
 
         SmartDashboard.putNumber("Auto Angle", evalAngle());
+        SmartDashboard.putNumber("Limelight Value", LimelightHelpers.getTY("limelight") + 53);
+        SmartDashboard.putNumber("X_", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
+        SmartDashboard.putNumber("Z_", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ());
 
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
-            else if(RotaterSubsystem.rotaterState == RotaterState.SHOOT){
+        else if(RotaterSubsystem.rotaterState == RotaterState.SHOOT){
             if(ShooterSubsystem.shooterState == ShooterState.SUB){
                 m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kSubShootPosition);
             }
@@ -57,16 +60,19 @@ public class RotaterCommand extends Command{
             else if(ShooterSubsystem.shooterState == ShooterState.STAGE){
                 m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kStageShootPosition);
             }
+            else if(ShooterSubsystem.shooterState == ShooterState.AMP){
+                m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kAmpShootPosition);
+            }
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.RESET){
-            m_rotaterSubsystem.run(-.25);
+            m_rotaterSubsystem.run(.05);
             if(m_rotaterSubsystem.getPosition() == 0){
                 RotaterSubsystem.rotaterState = RotaterState.INTAKE;
             }
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.AUTO){
-                m_rotaterSubsystem.toPosition(evalAngle());
-            }
+            m_rotaterSubsystem.toPosition(evalAngle());
+        }
     }
 
     public boolean isFinished(){

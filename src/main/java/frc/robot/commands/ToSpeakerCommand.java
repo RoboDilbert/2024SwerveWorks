@@ -31,10 +31,11 @@ public class ToSpeakerCommand extends Command {
         double KpDistance = 0.3;
         double distance =  LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ();
         double distance_error = distance-2.137;
+        ySpeed = 0;
 
         //Set turning speed and y speed based off of apriltag
         turningSpeed = -kPturning*LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX();
-        ySpeed = KpDistance*distance_error;
+        xSpeed = KpDistance*distance_error;
 
         //Set speeds to chassis
         ChassisSpeeds chassisSpeeds;

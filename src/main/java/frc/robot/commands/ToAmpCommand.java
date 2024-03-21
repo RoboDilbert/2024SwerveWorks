@@ -54,7 +54,7 @@ public class ToAmpCommand extends Command {
         distance_error =  distance - 0.3;
         
         //Setting y Speeds
-        ySpeed = KpDistance * distance_error;
+        xSpeed = KpDistance * distance_error;
 
         //Limiting y Speed
         ChassisSpeeds chassisSpeeds;

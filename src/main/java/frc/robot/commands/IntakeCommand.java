@@ -3,10 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.RotaterSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
-import frc.robot.subsystems.RotaterSubsystem.RotaterState;
+import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 
 public class IntakeCommand extends Command{
 
@@ -26,11 +26,31 @@ public class IntakeCommand extends Command{
             m_intakeSubsystem.run(0);
         }
         else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
-            RotaterSubsystem.rotaterState = RotaterState.INTAKE;
             IntakeSubsystem.intakeState = IntakeState.INTAKE;
             FeederSubsystem.feederState = FeederState.FEED;
-            m_intakeSubsystem.run(.75);
-            if(m_intakeSubsystem.getDistance() < 40){
+            if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.MANUAL){
+                m_intakeSubsystem.run(.75);
+            }
+            else{
+                m_intakeSubsystem.run(0);
+            }
+            if(m_intakeSubsystem.getIntakeDistance() < 250){
+                m_intakeSubsystem.run(0);
+                FeederSubsystem.feederState = FeederState.SLOW;
+                IntakeSubsystem.intakeState = IntakeState.SLOW;
+            }
+        }
+        else if(IntakeSubsystem.intakeState == IntakeState.SLOW){
+            m_intakeSubsystem.run(.15);
+            if(m_intakeSubsystem.getIntakeDistance() > 250){
+                m_intakeSubsystem.run(0);
+                FeederSubsystem.feederState = FeederState.SLOWER;
+                IntakeSubsystem.intakeState = IntakeState.SLOWER;
+            }
+        }
+        else if(IntakeSubsystem.intakeState == IntakeState.SLOWER){
+            m_intakeSubsystem.run(.05);
+            if(m_intakeSubsystem.getDistance() < 54){
                 m_intakeSubsystem.run(0);
                 FeederSubsystem.feederState = FeederState.OFF;
                 IntakeSubsystem.intakeState = IntakeState.OFF;

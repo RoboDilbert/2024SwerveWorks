@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -65,6 +66,14 @@ public class SwerveModule {
 
     public double getTurningVelocity() {
         return turningEncoder.getVelocity();
+    }
+
+    public void brake(){
+        driveMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void coast(){
+        driveMotor.setIdleMode(IdleMode.kCoast);
     }
 
     public double getAbsoluteEncoderRad() {

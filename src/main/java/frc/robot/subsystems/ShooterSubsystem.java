@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
@@ -24,18 +25,24 @@ public class ShooterSubsystem extends SubsystemBase{
     private SparkPIDController shooterMotor2_PidController;
     private RelativeEncoder shooterMotor1_Encoder;
     private RelativeEncoder shooterMotor2_Encoder;
-    public TimeOfFlight shooterSensor1 = new TimeOfFlight(Constants.SensorConstants.shooterSensor1ID);
-    public TimeOfFlight shooterSensor2 = new TimeOfFlight(Constants.SensorConstants.shooterSensor2ID);
-
+    
     private final double MAX_RPM = 5800;
 
     public static enum ShooterState{
         SUB,
         LINE,
-        STAGE
+        STAGE,
+        AMP
+    }
+
+    public static enum ShooterSpeedState{
+        OFF,
+        MAX
     }
 
     public static ShooterState shooterState = ShooterState.SUB;
+
+    public static ShooterSpeedState speedState = ShooterSpeedState.OFF;
 
     public ShooterSubsystem(){
         shooterMotor1 = new CANSparkFlex(Constants.SparkIDs.shooter1SparkID, MotorType.kBrushless);
@@ -60,8 +67,8 @@ public class ShooterSubsystem extends SubsystemBase{
         shooterMotor2_PidController.setFF(Constants.PID.kFF);
         shooterMotor1_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
         shooterMotor2_PidController.setOutputRange(Constants.PID.kMinOutput, Constants.PID.kMaxOutput);
-        shooterMotor1.setIdleMode(IdleMode.kCoast);
-        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor1.setIdleMode(IdleMode.kBrake);
+        shooterMotor2.setIdleMode(IdleMode.kBrake);
     }
 
     public void run(DoubleSupplier speed){
@@ -70,8 +77,10 @@ public class ShooterSubsystem extends SubsystemBase{
     }
 
     public void maxSpeed(){
-        shooterMotor1_PidController.setReference(-MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        //shooterMotor1_PidController.setReference(-(MAX_RPM - 1000), com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        //shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
+        shooterMotor1.set(-.6);
+        shooterMotor2.set(.8);
     }
 
     public void coast(){
@@ -102,6 +111,18 @@ public class ShooterSubsystem extends SubsystemBase{
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
         }
         shooterState = ShooterState.STAGE;
+    }
+
+    public Command toggleShooter() {
+        return runOnce(
+            () -> {
+                if(ShooterSubsystem.speedState == ShooterSpeedState.OFF){
+                    ShooterSubsystem.speedState = ShooterSpeedState.MAX;
+                }
+                else if(ShooterSubsystem.speedState == ShooterSpeedState.MAX){
+                    ShooterSubsystem.speedState = ShooterSpeedState.OFF;
+                }
+            });
     }
 
 
