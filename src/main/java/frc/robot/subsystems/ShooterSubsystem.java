@@ -25,9 +25,7 @@ public class ShooterSubsystem extends SubsystemBase{
     private SparkPIDController shooterMotor2_PidController;
     private RelativeEncoder shooterMotor1_Encoder;
     private RelativeEncoder shooterMotor2_Encoder;
-    public TimeOfFlight shooterSensor1 = new TimeOfFlight(Constants.SensorConstants.shooterSensor1ID);
-    public TimeOfFlight shooterSensor2 = new TimeOfFlight(Constants.SensorConstants.shooterSensor2ID);
-
+    
     private final double MAX_RPM = 5800;
 
     public static enum ShooterState{

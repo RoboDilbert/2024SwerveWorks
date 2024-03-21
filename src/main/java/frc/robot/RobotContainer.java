@@ -17,7 +17,9 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AmpCommand;
 import frc.robot.commands.AutoMoveCommand;
+import frc.robot.commands.AutoMoveIntake;
 import frc.robot.commands.AutoShoot;
+import frc.robot.commands.AutoShootClose;
 import frc.robot.commands.FeederCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.LifterCommand;
@@ -93,6 +95,7 @@ public class RobotContainer {
                 autoChooser.addOption("M32", M32);
                 autoChooser.addOption("M12", M12);
                 autoChooser.addOption("M123", M123);
+                autoChooser.addOption("TEST", TEST);
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -260,19 +263,38 @@ public class RobotContainer {
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
                 new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.85, -1.3, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 50, -11.5),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2, -0.5, false),
-                intakeSubsystem.autoIntake(),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.6, -1.9, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
                 feederSubsystem.feedPlease(),
-                rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.85, 0, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 50, -12.5),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.5, 1, false),
                 intakeSubsystem.autoIntake(),
-                feederSubsystem.feedPlease(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.8, 1.3, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 50, -11.5)
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                feederSubsystem.feedPlease(),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 2.7, 1.7, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.3, 1.7, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new InstantCommand(shooterSubsystem::coast)
+        );
+        SequentialCommandGroup TEST = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.25),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.3, 0, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new InstantCommand(shooterSubsystem::coast)
         );
 }

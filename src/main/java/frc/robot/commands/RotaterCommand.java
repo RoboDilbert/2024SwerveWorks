@@ -44,6 +44,8 @@ public class RotaterCommand extends Command{
 
         SmartDashboard.putNumber("Auto Angle", evalAngle());
         SmartDashboard.putNumber("Limelight Value", LimelightHelpers.getTY("limelight") + 53);
+        SmartDashboard.putNumber("X_", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
+        SmartDashboard.putNumber("Z_", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ());
 
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);

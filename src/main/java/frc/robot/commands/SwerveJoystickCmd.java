@@ -20,6 +20,8 @@ public class SwerveJoystickCmd extends Command {
     private final SlewRateLimiter turningLimiter;
     private ChassisSpeeds chassisSpeeds;
 
+    private double adjustedHeading;
+
 
     public SwerveJoystickCmd(SwerveSubsystem swerveSubsystem,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
@@ -36,10 +38,18 @@ public class SwerveJoystickCmd extends Command {
 
     @Override
     public void initialize() {
+        SwerveSubsystem.gyroAngleAuto = swerveSubsystem.getHeading();
     }
 
     @Override
     public void execute() {
+        adjustedHeading = swerveSubsystem.getHeading() - SwerveSubsystem.gyroAngleAuto;
+
+        SmartDashboard.putNumber("X Coord", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ());
+        SmartDashboard.putNumber("Y Coord", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ() * Math.tan(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX() * 1.13 + Math.toRadians(adjustedHeading)));
+        SmartDashboard.putNumber("Rotate Coord", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX());
+        SmartDashboard.putNumber("Heading Auto", Math.toDegrees(LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getX() * 1.13 + Math.toRadians(adjustedHeading)));
+
         //Get real-time joystick inputs
         double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();

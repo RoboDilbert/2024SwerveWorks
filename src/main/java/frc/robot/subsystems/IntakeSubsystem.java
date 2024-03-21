@@ -27,7 +27,9 @@ public class IntakeSubsystem extends SubsystemBase{
         OFF,
         INTAKE,
         FEED,
-        REVERSE
+        REVERSE,
+        SLOW,
+        SLOWER
     }
 
     public static IntakeState intakeState = IntakeState.OFF;
@@ -53,6 +55,10 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public double getDistance() {
         return intakeSensor1.getRange();
+    }
+
+    public double getIntakeDistance() {
+        return intakeSensor2.getRange();
     }
 
     public void stop(){
@@ -98,5 +104,6 @@ public class IntakeSubsystem extends SubsystemBase{
     public void periodic(){
         SmartDashboard.putString("Intake State: ", "" + IntakeSubsystem.intakeState);
         SmartDashboard.putNumber("Intake Sensor: ", intakeSensor1.getRange());
+        SmartDashboard.putNumber("Intake Sensor 2", intakeSensor2.getRange());
     }
 }
