@@ -3,12 +3,9 @@ package frc.robot.subsystems;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.PathPlannerLogging;
 import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -68,10 +64,11 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
     private final SwerveDriveOdometry odometer;
-
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
     private SwerveModuleState[] moduleStates = new SwerveModuleState[4]; 
+
+    public static double gyroAngleAuto = 0;
 
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
@@ -85,7 +82,7 @@ public class SwerveSubsystem extends SubsystemBase {
         moduleStates[3] = new SwerveModuleState(backRight.getDriveVelocity(), frontLeft.getState().angle);
 
         odometer = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics,
-        new Rotation2d(0), modulePosition);
+        new Rotation2d(), modulePosition);
 
         new Thread(() -> {
             try {
@@ -178,24 +175,6 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.stop();
         backRight.stop();
     }
-    /*public Drive(
-      GyroIO gyroIO,
-      ModuleIO flModuleIO,
-      ModuleIO frModuleIO,
-      ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
-    this.gyroIO = gyroIO;
-    modules[0] = new Module(flModuleIO, 0);
-    modules[1] = new Module(frModuleIO, 1);
-    modules[2] = new Module(blModuleIO, 2);
-    modules[3] = new Module(brModuleIO, 3);
-
-    // Configure AutoBuilder for PathPlanner
-    
-
-    pidController.enableContinuousInput(-180, 180);
-    pidController.setTolerance(1);
-  }
 
     public void drive(
         double throttle,
@@ -222,14 +201,12 @@ public class SwerveSubsystem extends SubsystemBase {
 
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
-    }*/
+    }
 
     public void drive(ChassisSpeeds chassisSpeeds){   
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
     }
-
-    
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
 
@@ -272,7 +249,6 @@ public class SwerveSubsystem extends SubsystemBase {
      }
 
     public void configurePathPlanner() {
-
         AutoBuilder.configureHolonomic(
             this::getPose, // Robot pose supplier
             this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting pose)
