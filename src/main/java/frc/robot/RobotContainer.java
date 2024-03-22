@@ -3,15 +3,15 @@ package frc.robot;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.SwerveJoystickCmd;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -61,8 +61,6 @@ public class RobotContainer {
 
 
         public RobotContainer() {
-        
-
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
                         () -> -driver_controller.getLeftX(),
                         () -> -driver_controller.getLeftY(),
@@ -129,39 +127,174 @@ public class RobotContainer {
 
         manipulator.a().onTrue(intakeSubsystem.toggleIntake());
         manipulator.rightBumper().onTrue(intakeSubsystem.reverse());
-        manipulator.b().whileTrue(new ShooterMaxCommand(shooterSubsystem));
-        manipulator.y().onTrue(new InstantCommand(rotaterSubsystem::resetPosition));
-        manipulator.x().onTrue(feederSubsystem.back());
-        
+        manipulator.b().whileTrue(new ShooterMaxCommandTeleop(shooterSubsystem));
+        manipulator.y().onTrue(rotaterSubsystem.resetRotater());
+        manipulator.x().onTrue(new AmpCommand(shooterLifterSubsystem));
         
 
         manipulator.pov(270).onTrue(new InstantCommand(shooterSubsystem::setSub));
         manipulator.pov(0).onTrue(new InstantCommand(shooterSubsystem::setLine));
         manipulator.pov(90).onTrue(new InstantCommand(shooterSubsystem::setStage));
 
-        
-        manipulator.button(7).onTrue(new InstantCommand(rotaterSubsystem::setAuto));
-        
+                
         if(FeederSubsystem.feederState != FeederState.FEED){
                 manipulator.pov(180).onTrue(feederSubsystem.shootUpOBlock());
         }
 
         manipulator.leftBumper().onTrue(feederSubsystem.shootUpAmp());
 
-
         DriverStation.reportError("Intake State: " + IntakeSubsystem.intakeState, true);
 
     }
 
-    public Command getAutonomousCommand() {
-        //PathPlannerPath path = PathPlannerPath.fromPathFile("Multiple Points");
-        //PathPlannerPath path = PathPlannerPath.fromPathFile("backnforth");
+        public Command getAutonomousCommand(){
+                return autoChooser.getSelected();
+        }
+        
+        SequentialCommandGroup M2 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.7, 0, true),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.5)
+        );
+        SequentialCommandGroup L1 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(40),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.4, -1.4, false),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false)
+        );
+        SequentialCommandGroup R3 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(-40),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.4, 1, false),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false)
+        );
+        SequentialCommandGroup M3 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false)
+        );
 
-        swerveSubsystem.zeroHeading();
-        PathPlannerPath path = PathPlannerPath.fromPathFile("straight as gavin");
-
-        return AutoBuilder.followPath(path);
-        //return autoChooser.getSelected();
-    }
-
+        SequentialCommandGroup M1 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false)
+        );
+        SequentialCommandGroup M32 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.75),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 100, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2, 0.2, false),
+                intakeSubsystem.autoIntake(),
+                feederSubsystem.feedPlease(),
+                rotaterSubsystem.autoIntake(),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.7, 0, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 100, -11.5)
+        );
+        SequentialCommandGroup M12 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.75),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.3, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 100, -11.9),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2, -0.2, false),
+                intakeSubsystem.autoIntake(),
+                feederSubsystem.feedPlease(),
+                rotaterSubsystem.autoIntake(),
+                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.7, 0, false),
+                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 100, -11.5)
+        );
+        SequentialCommandGroup M123 = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.25),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.6, -1.9, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                feederSubsystem.feedPlease(),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                feederSubsystem.feedPlease(),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 2.7, 1.7, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.3, 1.7, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new InstantCommand(shooterSubsystem::coast)
+        );
+        SequentialCommandGroup TEST = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(.25),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(.25),
+                intakeSubsystem.autoIntake(),
+                rotaterSubsystem.autoIntake(),
+                new InstantCommand(shooterSubsystem::coast),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.3, 0, false),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false),
+                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem),
+                new InstantCommand(shooterSubsystem::coast)
+        );
 }
