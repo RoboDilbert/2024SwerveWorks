@@ -127,6 +127,10 @@ public final class Constants {
         public static final int shooterSensor2ID = 35;
     }
 
+    public static final class LEDConstants {
+        public static final int LED_PWM = 4;
+    }
+
 
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
+import frc.robot.subsystems.LEDSubsystem;
 
 
 public class IntakeSubsystem extends SubsystemBase{
@@ -20,6 +21,8 @@ public class IntakeSubsystem extends SubsystemBase{
 
     public static TimeOfFlight intakeSensor1 = new TimeOfFlight(Constants.SensorConstants.intake1ID);
     public static TimeOfFlight intakeSensor2 = new TimeOfFlight(Constants.SensorConstants.intake2ID);
+
+    public static LEDSubsystem LED = new LEDSubsystem();
 
     public static boolean intake = false;
 
@@ -97,6 +100,7 @@ public class IntakeSubsystem extends SubsystemBase{
             () -> {
                     IntakeSubsystem.intakeState = IntakeState.INTAKE;
                     FeederSubsystem.feederState = FeederState.FEED;
+                    
                     run(.75);
             });
     }

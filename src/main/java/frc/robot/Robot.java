@@ -7,6 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDMode;
+import frc.robot.subsystems.LEDSubsystem;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -21,6 +25,7 @@ public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
 
     private RobotContainer m_robotContainer;
+    public LEDSubsystem m_leds;
 
     public static double frontLeftInitPos;
     public static double frontRightInitPos;
@@ -39,6 +44,7 @@ public class Robot extends TimedRobot {
         // and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = new RobotContainer();
+        m_leds = new LEDSubsystem();
 
     }
 
@@ -86,6 +92,10 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
+
+        m_leds.setLEDMode(LEDMode.AUTO);
+
+
     }
 
     /** This function is called periodically during autonomous. */
@@ -102,6 +112,9 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+        
+        m_leds.setLEDMode(LEDMode.TELEOP);
+
     }
 
     /** This function is called periodically during operator control. */
