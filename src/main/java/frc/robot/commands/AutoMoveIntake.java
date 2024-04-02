@@ -11,8 +11,6 @@ import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.RotaterSubsystem;
-import frc.robot.subsystems.ShooterLifterSubsystem;
-import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
@@ -59,15 +57,7 @@ public class AutoMoveIntake extends Command {
             IntakeSubsystem.intakeState = IntakeState.INTAKE;
             FeederSubsystem.feederState = FeederState.FEED;
             intakeSubsystem.run(.75);
-            if(intakeSubsystem.getIntakeDistance() < 250){
-                FeederSubsystem.feederState = FeederState.SLOW;
-                IntakeSubsystem.intakeState = IntakeState.SLOW;
-            }
-        }
-        else if(IntakeSubsystem.intakeState == IntakeState.SLOW){
-            intakeSubsystem.run(.15);
-            feederSubsystem.feed(() -> -.15);
-            if(intakeSubsystem.getDistance() < 54){
+            if(intakeSubsystem.getDistance() < 42){
                 intakeSubsystem.run(0);
                 feederSubsystem.feedStop();
                 FeederSubsystem.feederState = FeederState.OFF;
@@ -83,7 +73,7 @@ public class AutoMoveIntake extends Command {
         adjustedHeading = swerveSubsystem.getHeading() - SwerveSubsystem.gyroAngleAuto;
         angle = 0;
         double kPturning = 0.45;
-        double kPX = 0.25;
+        double kPX = 0.1875;
         double kPY = 0.125;
 
         if(straight){
@@ -144,7 +134,7 @@ public class AutoMoveIntake extends Command {
 
     @Override
     public boolean isFinished() {
-        if(Math.abs(xDistance) < .3 && Math.abs(yDistance) < .2 && Math.abs(angle) < .3){
+        if(Math.abs(xDistance) < .3 && Math.abs(yDistance) < .3 && Math.abs(angle) < .3){
             return true;
         }
         return false;

@@ -33,6 +33,7 @@ public class FeederCommand extends Command{
         }
         else if(FeederSubsystem.feederState == FeederState.FEED){
             m_feederSubsystem.feed(() -> -.75);
+            backSpin = false;
         }
         else if(FeederSubsystem.feederState == FeederState.SLOW){
             m_feederSubsystem.feed(() -> -.15);
@@ -40,15 +41,15 @@ public class FeederCommand extends Command{
         else if(FeederSubsystem.feederState == FeederState.SLOWER){
             m_feederSubsystem.feed(() -> -.05);
         }
-        else if(FeederSubsystem.feederState == FeederState.FORWARD){
+        else if(FeederSubsystem.feederState == FeederState.BACK){
             if(!backSpin){
                 backSpin = true;
                 initialPosBack = m_feederSubsystem.getFeederPosition();
-                m_feederSubsystem.feed(() -> -.125);
+                m_feederSubsystem.feed(() -> .125);
             }
             if(backSpin){
-                m_feederSubsystem.feed(() -> -.125);
-                if(m_feederSubsystem.getFeederPosition() < initialPosBack - 4){
+                m_feederSubsystem.feed(() -> .125);
+                if(m_feederSubsystem.getFeederPosition() > initialPosBack + 4){
                     backSpin = false;
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;

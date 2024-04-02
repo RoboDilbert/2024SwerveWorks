@@ -129,14 +129,18 @@ public final class Constants {
 
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
+        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond*8;
         public static final double kMaxAngularSpeedRadiansPerSecond =
-                DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 0.3;
-        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
+                //DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond;
+                DriveConstants.kTeleDriveMaxAngularSpeedRadiansPerSecond;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 0.5;
+        //public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI;
+        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = 1 * Math.PI / 4; //was 2
         public static final double kPXController = 1;
         public static final double kPYController = 1;
         public static final double kPThetaController = .25;
+        //public static final double kPThetaController = 1;
+
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
@@ -156,9 +160,9 @@ public final class Constants {
     }
 
     public static final class TeleOpConstants {
-        public static final double kRotaterIntakePosition = -13.8; //12.8
-        public static final double kSubShootPosition = -1;
-        public static final double kLineShootPosition = -38;
+        public static final double kRotaterIntakePosition = -12.8; //12.8
+        public static final double kSubShootPosition = -0.1;
+        public static final double kLineShootPosition = -50;
         public static final double kStageShootPosition = -11.5;
         public static final double kAmpShootPosition = -31;
     }
@@ -174,7 +178,11 @@ public final class Constants {
         public static final double kIdleSpeed = 20;                 // Idle Speed
         public static final double kHorizontalAngle = -30;           // Horizontal Angle 
 
-        public static final double kVerticalAngle = -1;            // Vertical Angle     
+        public static final double kVerticalAngle = -0.1;            // Vertical Angle     
         public static final double maxPower = 5800;                 // Max Power       
+    }
+
+    public static final class LEDConstants {
+        public static final int LED_PWM = 0;
     }
 }

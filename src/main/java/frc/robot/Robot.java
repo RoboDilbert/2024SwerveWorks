@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to
@@ -26,7 +27,7 @@ public class Robot extends TimedRobot {
     public static double frontRightInitPos;
     public static double backLeftInitPos;
     public static double backRightInitPos;
-
+    //public static Pose2d newPose = new Pose2d();
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -102,6 +103,7 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
+
     }
 
     /** This function is called periodically during operator control. */

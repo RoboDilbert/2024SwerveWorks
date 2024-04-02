@@ -33,7 +33,7 @@ public class TrackSpeakerCommand extends Command {
         double xSpeed = -ySpdFunction.get();
         double ySpeed = xSpdFunction.get();
         double turningSpeed;
-        double kPturning = 0.1;
+        double kPturning = 0.05;
         
         //Apply deadband
         xSpeed = Math.abs(xSpeed) > OIConstants.kDeadband ? xSpeed : 0.0;

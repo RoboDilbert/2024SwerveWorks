@@ -38,15 +38,15 @@ public class ShooterLifterCommand extends Command{
                 m_ShooterLifterSubsystem.run(0);
             }
         }
-        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AUTO && ShooterSubsystem.shooterState == ShooterState.AMP){
-            if(m_ShooterLifterSubsystem.getPosition() < 70){
+        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AUTO && ShooterSubsystem.shooterState == ShooterState.LINE){
+            if(m_ShooterLifterSubsystem.getPosition() < 67){
                 m_ShooterLifterSubsystem.run(0.5);
             }
-            else if(m_ShooterLifterSubsystem.getPosition() > 70){
+            else if(m_ShooterLifterSubsystem.getPosition() > 67){
                 //m_ShooterLifterSubsystem.run(-0.75);
             }
     
-            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 70) < 1){
+            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 67) < 1){
                 m_ShooterLifterSubsystem.run(0);
             }
         }

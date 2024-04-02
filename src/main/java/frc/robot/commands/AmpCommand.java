@@ -20,7 +20,7 @@ public class AmpCommand extends Command{
     public void initialize(){
         if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.MANUAL){
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
-            ShooterSubsystem.shooterState = ShooterState.AMP;
+            ShooterSubsystem.shooterState = ShooterState.LINE;
             ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.AUTO;
         }
         else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AUTO){

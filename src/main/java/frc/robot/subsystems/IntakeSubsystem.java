@@ -105,5 +105,8 @@ public class IntakeSubsystem extends SubsystemBase{
         SmartDashboard.putString("Intake State: ", "" + IntakeSubsystem.intakeState);
         SmartDashboard.putNumber("Intake Sensor: ", intakeSensor1.getRange());
         SmartDashboard.putNumber("Intake Sensor 2", intakeSensor2.getRange());
+        SmartDashboard.putNumber("Intake Motor Current", intakeMotor.getOutputCurrent());
+        SmartDashboard.putNumber("Intake Motor 2 Current", intakeMotor2.getOutputCurrent());
+
     }
 }

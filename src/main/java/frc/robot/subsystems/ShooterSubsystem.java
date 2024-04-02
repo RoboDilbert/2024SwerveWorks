@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
@@ -79,8 +78,8 @@ public class ShooterSubsystem extends SubsystemBase{
     public void maxSpeed(){
         //shooterMotor1_PidController.setReference(-(MAX_RPM - 1000), com.revrobotics.CANSparkBase.ControlType.kVelocity);
         //shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor1.set(-.6);
-        shooterMotor2.set(.8);
+        shooterMotor1.set(.3);
+        shooterMotor2.set(-1);
     }
 
     public void coast(){

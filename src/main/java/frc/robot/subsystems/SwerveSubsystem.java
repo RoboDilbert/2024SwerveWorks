@@ -10,6 +10,7 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -22,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.LimelightHelpers;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -102,23 +102,28 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return Math.IEEEremainder((gyro.getAngle()-90), 360);
+        return Math.IEEEremainder((gyro.getAngle()), 360);
     }
 
     public Rotation2d getRotation2d() {
         return Rotation2d.fromDegrees(getHeading());
     }
 
+    public Rotation2d getRotation2dTele() {
+        return Rotation2d.fromDegrees(Math.IEEEremainder(gyro.getAngle() - 90, 360));
+    }
+
     public Command setStaticHeading(double offset){
         return runOnce(() -> SwerveSubsystem.gyroAngleAuto = getHeading() - offset);
     }
 
+    public void setPose(Rotation2d angle, Pose2d pose){
+        odometer.resetPosition(angle, modulePosition, pose);
+    }
 
     public Pose2d getPose() {
-        SmartDashboard.putNumber("PoseX", odometer.getPoseMeters().getX());
-        SmartDashboard.putNumber("PoseY", odometer.getPoseMeters().getY());
-        SmartDashboard.putNumber("Rotation", odometer.getPoseMeters().getRotation().getDegrees());
-        return odometer.getPoseMeters();
+        Pose2d nitin = new Pose2d(new Translation2d(odometer.getPoseMeters().getTranslation().getX(), odometer.getPoseMeters().getTranslation().getY()), new Rotation2d(-odometer.getPoseMeters().getRotation().getRadians()));
+        return nitin;
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -166,6 +171,9 @@ public class SwerveSubsystem extends SubsystemBase {
         odometer.update(getRotation2d(), modulePosition);
         updateStates(moduleStates);
         SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("Odometer Reading", -odometer.getPoseMeters().getRotation().getRadians());
+        SmartDashboard.putNumber("LEft encoder", frontLeft.getAbsoluteEncoderDeg());
+        SmartDashboard.putNumber("left encoder turn", frontLeft.getTurningPosition());
         //SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
     }
 
@@ -176,7 +184,7 @@ public class SwerveSubsystem extends SubsystemBase {
         backRight.stop();
     }
 
-    public void drive(
+    /*public void drive(
         double throttle,
         double strafe,
         double rotation,
@@ -186,11 +194,11 @@ public class SwerveSubsystem extends SubsystemBase {
         // Applies a Deadband of 0.05 to the controllers input
         throttle = throttle * Constants.AutoConstants.kMaxSpeedMetersPerSecond;
         strafe = strafe * Constants.AutoConstants.kMaxSpeedMetersPerSecond;
-        rotation = rotation * Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond;
+        rotation = -rotation * Constants.AutoConstants.kMaxAngularSpeedRadiansPerSecond;
 
         ChassisSpeeds chassisSpeeds = isFieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                throttle, strafe, rotation, 
+                throttle, strafe, rotation,
                 // Sets an offset if robot path doesn't start facing drive station
                 getPose().getRotation())
             : new ChassisSpeeds(throttle, strafe, rotation);
@@ -201,7 +209,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         setModuleStates(moduleStates);
-    }
+    }*/
+
 
     public void drive(ChassisSpeeds chassisSpeeds){   
         moduleStates = Constants.DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
@@ -239,7 +248,6 @@ public class SwerveSubsystem extends SubsystemBase {
     } 
 
     public ChassisSpeeds getChassisSpeed() {
-        SmartDashboard.putNumber("LeftFront", frontLeft.getState().speedMetersPerSecond);
         return Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(
             frontLeft.getState(),
             frontRight.getState(),
@@ -255,10 +263,10 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(0.45, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(0.1, 0.0, 0.0), // Rotation PID constants
-                    0.5, // Max module speed, in m/s
-                    0.4, // Drive base radius in meters. Distance from robot center to furthest module.
+                    new PIDConstants(2.5, 0, 0), // Translation PID constants
+                    new PIDConstants(2.3, 0, 0), // Rotation PID constants
+                    5, // Max module speed, in m/s
+                    20.3, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here
             ),
             () -> {

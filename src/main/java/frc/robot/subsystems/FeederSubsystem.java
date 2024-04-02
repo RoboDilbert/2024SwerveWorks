@@ -61,7 +61,11 @@ public class FeederSubsystem extends SubsystemBase{
     }
 
     public Command feedPlease(){
-        return runOnce(() -> feed(() -> -0.75));
+        return runOnce(() -> {
+                feed(() -> -0.75);
+                FeederSubsystem.feederState = FeederState.FEED;
+            }
+            );
     }
 
     public Command shootUpAmp(){

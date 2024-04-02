@@ -18,10 +18,11 @@ public class RotaterSubsystem extends SubsystemBase{
         INTAKE,
         SHOOT,
         AUTO,
-        RESET
+        RESET,
+        OFF
     }
 
-    public static RotaterState rotaterState = RotaterState.INTAKE;
+    public static RotaterState rotaterState = RotaterState.OFF;
 
     public RotaterSubsystem(){
         rotater.restoreFactoryDefaults();
