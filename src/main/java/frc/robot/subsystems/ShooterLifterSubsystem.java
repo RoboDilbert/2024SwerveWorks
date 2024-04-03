@@ -16,8 +16,9 @@ public class ShooterLifterSubsystem extends SubsystemBase{
     public static RelativeEncoder shooterEncoder = shooterLifter1.getEncoder();
 
     public static enum ShooterLifterState{
-        AUTO,
         MANUAL,
+        AMP,
+        TRAP,
         DOWN
     }
 
@@ -50,8 +51,12 @@ public class ShooterLifterSubsystem extends SubsystemBase{
         run(power);
     }
 
-    public Command auto(){
-        return runOnce(() -> ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.AUTO);
+    public Command trap(){
+        return runOnce(() -> ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.TRAP);
+    }
+
+    public Command amp(){
+        return runOnce(() -> ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.AMP);
     }
 
     public Command resetShooterLifter(){

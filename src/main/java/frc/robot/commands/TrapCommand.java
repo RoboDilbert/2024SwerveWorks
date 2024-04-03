@@ -8,11 +8,11 @@ import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
-public class AmpCommand extends Command{
+public class TrapCommand extends Command{
 
     private boolean end;
 
-    public AmpCommand(ShooterLifterSubsystem lift){
+    public TrapCommand(ShooterLifterSubsystem lift){
         end  = true;
         addRequirements(lift);
     }
@@ -20,12 +20,12 @@ public class AmpCommand extends Command{
     public void initialize(){
         if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.MANUAL){
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
-            ShooterSubsystem.shooterState = ShooterState.AMP;
-            ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.AMP;
+            ShooterSubsystem.shooterState = ShooterState.TRAP;
+            ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.TRAP;
         }
-        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AMP){
+        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.TRAP){
             RotaterSubsystem.rotaterState = RotaterState.INTAKE;
-            ShooterSubsystem.shooterState = ShooterState.AMP;
+            ShooterSubsystem.shooterState = ShooterState.TRAP;
             ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.DOWN;
         } 
     }

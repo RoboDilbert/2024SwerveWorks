@@ -23,9 +23,10 @@ public class AutoShootClose extends Command{
     private boolean end;
     private double angle;
     private double wait;
+    private double angleManual;
 
 
-    public AutoShootClose(FeederSubsystem feed, ShooterSubsystem shooter, IntakeSubsystem intake, RotaterSubsystem rotaterSubsystem){
+    public AutoShootClose(FeederSubsystem feed, ShooterSubsystem shooter, IntakeSubsystem intake, RotaterSubsystem rotaterSubsystem, double angle){
         m_feederSubsystem = feed;
         m_shooterSubsystem = shooter;
         m_intakeSubsystem = intake;
@@ -34,7 +35,8 @@ public class AutoShootClose extends Command{
         initialPosShoot = 0;
         end = false;
         wait = 0;
-        addRequirements(feed);
+        this.angleManual = angle;
+        addRequirements(feed, shooter, intake, rotaterSubsystem);
     }
 
     public void initialize(){
@@ -46,14 +48,18 @@ public class AutoShootClose extends Command{
 
     public double evalAngle() {
         LimelightHelpers.setPipelineIndex("limelight", 0);
-        angle = ((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .75;                 // *APRIL_TAG_VALUE
-        //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
+        angle = (((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .75) + .2;         //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
         //angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
         return angle;
     }
 
     public void execute(){
-        m_rotaterSubsystem.toPosition(evalAngle());
+        if(angleManual == 0){
+            m_rotaterSubsystem.toPosition(evalAngle());
+        }
+        else{
+            m_rotaterSubsystem.toPosition(angleManual);
+        }
         if(FeederSubsystem.feederState == FeederState.OFF){
             wait++;
         }
@@ -61,7 +67,7 @@ public class AutoShootClose extends Command{
             m_feederSubsystem.feed(() -> 0);
             m_shooterSubsystem.maxSpeed();
         }
-        if(wait > 30){
+        if(wait > 50){
             m_feederSubsystem.feed(() -> -1);
             FeederSubsystem.feederState = FeederState.FEED;
         }

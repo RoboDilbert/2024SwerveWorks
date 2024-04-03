@@ -68,6 +68,13 @@ public class FeederSubsystem extends SubsystemBase{
             );
     }
 
+    public Command feedOff(){
+        return runOnce(() -> {
+                FeederSubsystem.feederState = FeederState.OFF;
+            }
+            );
+    }
+
     public Command shootUpAmp(){
         return runOnce(() -> feederState = FeederState.AMP);
     }

@@ -160,11 +160,11 @@ public final class Constants {
     }
 
     public static final class TeleOpConstants {
-        public static final double kRotaterIntakePosition = -12.8; //12.8
+        public static final double kRotaterIntakePosition = -12.4; //12.8
         public static final double kSubShootPosition = -0.1;
-        public static final double kLineShootPosition = -50;
+        public static final double kTrapShootPosition = -38;
         public static final double kStageShootPosition = -11.5;
-        public static final double kAmpShootPosition = -31;
+        public static final double kAmpShootPosition = -50;
     }
 
     public static final class ShooterConstants {
@@ -176,7 +176,7 @@ public final class Constants {
         public static final double kGearRatio = 4.0/9.0;                 // Gear ratio 80/360 = 2/9
 
         public static final double kIdleSpeed = 20;                 // Idle Speed
-        public static final double kHorizontalAngle = -30;           // Horizontal Angle 
+        public static final double kHorizontalAngle = -24;           // Horizontal Angle 
 
         public static final double kVerticalAngle = -0.1;            // Vertical Angle     
         public static final double maxPower = 5800;                 // Max Power       

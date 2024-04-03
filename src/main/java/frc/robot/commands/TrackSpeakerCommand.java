@@ -30,8 +30,8 @@ public class TrackSpeakerCommand extends Command {
     @Override
     public void execute() {
         //Get real-time joystick inputs and angle from apriltag
-        double xSpeed = -ySpdFunction.get();
-        double ySpeed = xSpdFunction.get();
+        double xSpeed = ySpdFunction.get();
+        double ySpeed = -xSpdFunction.get();
         double turningSpeed;
         double kPturning = 0.05;
         

@@ -34,7 +34,7 @@ public class IntakeCommand extends Command{
             else{
                 m_intakeSubsystem.run(0);
             }
-            if(m_intakeSubsystem.getDistance() < 42){
+            if(m_intakeSubsystem.getDistance() < 50){
                 m_intakeSubsystem.run(0);
                 FeederSubsystem.feederState = FeederState.BACK;
                 IntakeSubsystem.intakeState = IntakeState.OFF;

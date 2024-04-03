@@ -25,6 +25,8 @@ public class AutoMoveIntake extends Command {
     private double desiredX;
     private double desiredY;
     private boolean straight;
+    private double error;
+    private boolean intake;
 
     private double xDistance;
     private double yDistance;
@@ -32,7 +34,7 @@ public class AutoMoveIntake extends Command {
 
     private double adjustedHeading;
 
-    public AutoMoveIntake(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, IntakeSubsystem intakeSubsystem, FeederSubsystem feederSubsystem, double x, double y, boolean straight) {
+    public AutoMoveIntake(SwerveSubsystem swerveSubsystem, RotaterSubsystem rotaterSubsystem, IntakeSubsystem intakeSubsystem, FeederSubsystem feederSubsystem, double x, double y, boolean straight, double error, boolean intake) {
         this.swerveSubsystem = swerveSubsystem;
         this.rotaterSubsystem = rotaterSubsystem;
         this.intakeSubsystem = intakeSubsystem;
@@ -40,6 +42,8 @@ public class AutoMoveIntake extends Command {
         desiredX = x;
         desiredY = y;
         this.straight = straight;
+        this.error = error;
+        this.intake = intake;
         addRequirements(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem);
     }
 
@@ -53,16 +57,16 @@ public class AutoMoveIntake extends Command {
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             rotaterSubsystem.toPosition(Constants.TeleOpConstants.kRotaterIntakePosition);
         } 
-        if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
+        if(intakeSubsystem.getDistance() < 50){
+            intakeSubsystem.run(0);
+            feederSubsystem.feedStop();
+            FeederSubsystem.feederState = FeederState.OFF;
+            IntakeSubsystem.intakeState = IntakeState.OFF;
+        }
+        else if (intake){
             IntakeSubsystem.intakeState = IntakeState.INTAKE;
             FeederSubsystem.feederState = FeederState.FEED;
             intakeSubsystem.run(.75);
-            if(intakeSubsystem.getDistance() < 42){
-                intakeSubsystem.run(0);
-                feederSubsystem.feedStop();
-                FeederSubsystem.feederState = FeederState.OFF;
-                IntakeSubsystem.intakeState = IntakeState.OFF;
-            }
         }
         
         //shooterLifterSubsystem.toPosition(4.0);
@@ -72,9 +76,9 @@ public class AutoMoveIntake extends Command {
         double ySpeed = 0;
         adjustedHeading = swerveSubsystem.getHeading() - SwerveSubsystem.gyroAngleAuto;
         angle = 0;
-        double kPturning = 0.45;
+        double kPturning = 0.25;
         double kPX = 0.1875;
-        double kPY = 0.125;
+        double kPY = 0.08;
 
         if(straight){
             yDistance = 0;
@@ -97,8 +101,8 @@ public class AutoMoveIntake extends Command {
             angle = 0;
         }
 
-        SmartDashboard.putNumber("pre y", ySpeed);
-        SmartDashboard.putNumber("pre x", xSpeed);
+        SmartDashboard.putNumber("pre y", yDistance);
+        SmartDashboard.putNumber("pre x", xDistance);
         SmartDashboard.putNumber("rotate", angle);
         SmartDashboard.putNumber("heading", adjustedHeading);
         SmartDashboard.putNumber("offset", SwerveSubsystem.gyroAngleAuto);
@@ -107,11 +111,14 @@ public class AutoMoveIntake extends Command {
         if(Math.abs(xSpeed) > .45){
             xSpeed = .45 * Math.signum(xSpeed);
         }
-        if(Math.abs(ySpeed) > .3){
-            ySpeed = .3 * Math.signum(ySpeed);
+        if(Math.abs(ySpeed) > .1){
+            ySpeed = .1 * Math.signum(ySpeed);
         }
-        if(Math.abs(angle) > .3){
-            angle = .3 * Math.signum(ySpeed);
+        else if(Math.abs(ySpeed) < .03){
+            ySpeed = .03 * Math.signum(ySpeed);
+        }
+        if(Math.abs(angle) > .2){
+            angle = .2 * Math.signum(ySpeed);
         }
 
         SmartDashboard.putNumber("y", ySpeed);
@@ -134,7 +141,7 @@ public class AutoMoveIntake extends Command {
 
     @Override
     public boolean isFinished() {
-        if(Math.abs(xDistance) < .3 && Math.abs(yDistance) < .3 && Math.abs(angle) < .3){
+        if(Math.abs(xDistance) < .15 && Math.abs(yDistance) < .5 && Math.abs(angle) < error){
             return true;
         }
         return false;

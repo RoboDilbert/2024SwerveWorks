@@ -29,7 +29,7 @@ public class ShooterSubsystem extends SubsystemBase{
 
     public static enum ShooterState{
         SUB,
-        LINE,
+        TRAP,
         STAGE,
         AMP
     }
@@ -98,11 +98,11 @@ public class ShooterSubsystem extends SubsystemBase{
         shooterState = ShooterState.SUB;
     }
 
-    public void setLine(){
+    public void setTrap(){
         if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
         }
-        shooterState = ShooterState.LINE;
+        shooterState = ShooterState.TRAP;
     }
 
     public void setStage(){
@@ -110,6 +110,13 @@ public class ShooterSubsystem extends SubsystemBase{
             RotaterSubsystem.rotaterState = RotaterState.SHOOT;
         }
         shooterState = ShooterState.STAGE;
+    }
+
+    public void setAmp(){
+        if(RotaterSubsystem.rotaterState == RotaterState.INTAKE){
+            RotaterSubsystem.rotaterState = RotaterState.SHOOT;
+        }
+        shooterState = ShooterState.AMP;
     }
 
     public Command toggleShooter() {

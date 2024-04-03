@@ -38,7 +38,7 @@ public class ShooterLifterCommand extends Command{
                 m_ShooterLifterSubsystem.run(0);
             }
         }
-        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AUTO && ShooterSubsystem.shooterState == ShooterState.LINE){
+        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.TRAP && ShooterSubsystem.shooterState == ShooterState.TRAP){
             if(m_ShooterLifterSubsystem.getPosition() < 67){
                 m_ShooterLifterSubsystem.run(0.5);
             }
@@ -47,6 +47,18 @@ public class ShooterLifterCommand extends Command{
             }
     
             if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 67) < 1){
+                m_ShooterLifterSubsystem.run(0);
+            }
+        }
+        else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AMP && ShooterSubsystem.shooterState == ShooterState.AMP){
+            if(m_ShooterLifterSubsystem.getPosition() < 42){
+                m_ShooterLifterSubsystem.run(0.5);
+            }
+            else if(m_ShooterLifterSubsystem.getPosition() > 42){
+                //m_ShooterLifterSubsystem.run(-0.75);
+            }
+    
+            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 42) < 1){
                 m_ShooterLifterSubsystem.run(0);
             }
         }

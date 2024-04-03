@@ -26,7 +26,7 @@ public class RotaterCommand extends Command{
 
     public double evalAngle() {
         LimelightHelpers.setPipelineIndex("limelight", 0);
-        angle = ((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .75;                 // *APRIL_TAG_VALUE
+        angle = (((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .75) + .2;                 // *APRIL_TAG_VALUE
         //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
         //angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
         return angle;
@@ -49,8 +49,8 @@ public class RotaterCommand extends Command{
             if(ShooterSubsystem.shooterState == ShooterState.SUB){
                 m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kSubShootPosition);
             }
-            else if(ShooterSubsystem.shooterState == ShooterState.LINE){
-                m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kLineShootPosition);
+            else if(ShooterSubsystem.shooterState == ShooterState.TRAP){
+                m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kTrapShootPosition);
             }
             else if(ShooterSubsystem.shooterState == ShooterState.STAGE){
                 m_rotaterSubsystem.toPosition(Constants.TeleOpConstants.kStageShootPosition);
