@@ -216,7 +216,7 @@ public class RobotContainer {
                 swerveSubsystem.setStaticHeading(0),
                 new InstantCommand(shooterSubsystem::coast),
                 feederSubsystem.feedOff(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, -1, false, .15, true),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, -1, false, .1, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.5),
                 new InstantCommand(shooterSubsystem::coast),
                 feederSubsystem.feedPlease(),
@@ -305,7 +305,7 @@ public class RobotContainer {
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, .5, false, .25, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
                 new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 1.3, false, .25, false)
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, false, .25, false)
         );
         SequentialCommandGroup M21 = new SequentialCommandGroup(
                 swerveSubsystem.setStaticHeading(0),
@@ -328,7 +328,7 @@ public class RobotContainer {
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, -.5, false, .25, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
                 new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, -1.3, false, .25, false)
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, false, .25, false)
         );
         SequentialCommandGroup M123 = new SequentialCommandGroup(
                 swerveSubsystem.setStaticHeading(0),

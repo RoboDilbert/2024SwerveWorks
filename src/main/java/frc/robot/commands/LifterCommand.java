@@ -5,6 +5,8 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LifterSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem;
+import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 
 public class LifterCommand extends Command{
 
@@ -70,6 +72,10 @@ public class LifterCommand extends Command{
         }
         else{
             m_lifterSubsystem.run(() -> 0, () -> 0);
+        }
+
+        if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.TRAP){
+            m_lifterSubsystem.run(() -> -.04, () -> -.04);
         }
     }
 

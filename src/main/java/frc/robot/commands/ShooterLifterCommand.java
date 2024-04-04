@@ -39,14 +39,14 @@ public class ShooterLifterCommand extends Command{
             }
         }
         else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.TRAP && ShooterSubsystem.shooterState == ShooterState.TRAP){
-            if(m_ShooterLifterSubsystem.getPosition() < 67){
+            if(m_ShooterLifterSubsystem.getPosition() < 70.5){
                 m_ShooterLifterSubsystem.run(0.5);
             }
-            else if(m_ShooterLifterSubsystem.getPosition() > 67){
+            else if(m_ShooterLifterSubsystem.getPosition() > 70.5){
                 //m_ShooterLifterSubsystem.run(-0.75);
             }
     
-            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 67) < 1){
+            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 70.5) < 1){
                 m_ShooterLifterSubsystem.run(0);
             }
         }

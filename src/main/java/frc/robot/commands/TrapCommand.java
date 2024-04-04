@@ -24,8 +24,8 @@ public class TrapCommand extends Command{
             ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.TRAP;
         }
         else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.TRAP){
-            RotaterSubsystem.rotaterState = RotaterState.INTAKE;
-            ShooterSubsystem.shooterState = ShooterState.TRAP;
+            RotaterSubsystem.rotaterState = RotaterState.SHOOT;
+            ShooterSubsystem.shooterState = ShooterState.SUB;
             ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.DOWN;
         } 
     }

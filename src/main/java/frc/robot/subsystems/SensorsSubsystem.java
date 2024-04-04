@@ -100,9 +100,7 @@ public class SensorsSubsystem extends SubsystemBase{
        
        
        //SmartDashboard.putNumber("Left TOF", leftFlightSensor);
-       SmartDashboard.putBoolean("Left TOF isSeeing?", isSeeing());
        //SmartDashboard.putNumber("Left TOF", lidar1.getRange());
-       SmartDashboard.putNumber("Right TOF", getDistance());
        SmartDashboard.updateValues();
    }
 

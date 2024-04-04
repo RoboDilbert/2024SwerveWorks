@@ -26,7 +26,7 @@ public class RotaterCommand extends Command{
 
     public double evalAngle() {
         LimelightHelpers.setPipelineIndex("limelight", 0);
-        angle = (((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .75) + .2;                 // *APRIL_TAG_VALUE
+        angle = (((Constants.ShooterConstants.kHorizontalAngle + Constants.ShooterConstants.kGearRatio*(LimelightHelpers.getTY("limelight") + 53))) * .71) + .2;                 // *APRIL_TAG_VALUE
         //angle += Constants.ShooterConstants.kAngleDistanceMultiplier;   // *LIDAR_DISTANCE_VALUE
         //angle += Constants.ShooterConstants.kAngleSpeedMultiplier;      // *ROBOT_SPEED_Y_VALUE
         return angle;
