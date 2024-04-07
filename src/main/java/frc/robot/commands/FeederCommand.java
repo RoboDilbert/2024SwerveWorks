@@ -2,7 +2,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.subsystems.RotaterSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
+import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterSpeedState;
 
@@ -70,6 +72,7 @@ public class FeederCommand extends Command{
                     m_feederSubsystem.feed(() -> 0);
                     FeederSubsystem.feederState = FeederState.OFF;
                     ShooterSubsystem.speedState = ShooterSpeedState.OFF;
+                    RotaterSubsystem.rotaterState = RotaterState.INTAKE; 
                 }
             }
         }

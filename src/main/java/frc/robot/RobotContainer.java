@@ -102,6 +102,7 @@ public class RobotContainer {
                 //autoChooser.addOption("M3", M3);
                 autoChooser.addOption("M23", M23);
                 autoChooser.addOption("M21", M21);
+                autoChooser.addOption("LR", LR);
                 //autoChooser.addOption("M123", M123);
                 //autoChooser.addOption("TEST", TEST);
 
@@ -156,7 +157,7 @@ public class RobotContainer {
         
 
         manipulator.pov(270).onTrue(new InstantCommand(shooterSubsystem::setSub));
-        manipulator.pov(0).onTrue(new InstantCommand(shooterSubsystem::setAmp));
+        manipulator.pov(0).onTrue(lifterSubsystem.lifterUpTrap());
         manipulator.pov(90).onTrue(new InstantCommand(shooterSubsystem::setStage));
 
                 
@@ -293,14 +294,13 @@ public class RobotContainer {
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
                 new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .3, true),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .4, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.85, .6, false, .3, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
                 new InstantCommand(shooterSubsystem::coast),
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.2, 1.9, false, .3, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 2, false, .3, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, .5, false, .25, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
@@ -316,19 +316,27 @@ public class RobotContainer {
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
                 new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .3, true),
+                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .4, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.85, -.6, false, .3, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
                 new InstantCommand(shooterSubsystem::coast),
                 feederSubsystem.feedPlease(),
                 intakeSubsystem.autoIntake(),
                 rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.2, -1.9, false, .3, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, -2, false, .3, true),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, -.5, false, .25, true),
                 new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
                 new InstantCommand(shooterSubsystem::coast),
                 new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, false, .25, false)
+        );
+        SequentialCommandGroup LR = new SequentialCommandGroup(
+                swerveSubsystem.setStaticHeading(0),
+                new ShooterMaxCommand(shooterSubsystem),
+                new WaitCommand(1),
+                feederSubsystem.feedPlease(),
+                new WaitCommand(1),
+                new InstantCommand(shooterSubsystem::coast),
+                feederSubsystem.feedOff()
         );
         SequentialCommandGroup M123 = new SequentialCommandGroup(
                 swerveSubsystem.setStaticHeading(0),

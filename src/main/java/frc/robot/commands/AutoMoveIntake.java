@@ -141,7 +141,7 @@ public class AutoMoveIntake extends Command {
 
     @Override
     public boolean isFinished() {
-        if(Math.abs(xDistance) < .15 && Math.abs(yDistance) < .5 && Math.abs(angle) < error){
+        if(Math.abs(xDistance) < .15 && Math.abs(yDistance) < .7 && Math.abs(angle) < error){
             return true;
         }
         return false;

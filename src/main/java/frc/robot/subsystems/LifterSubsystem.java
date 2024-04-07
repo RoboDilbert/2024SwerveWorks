@@ -7,8 +7,11 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 
 
 public class LifterSubsystem extends SubsystemBase{
@@ -18,6 +21,13 @@ public class LifterSubsystem extends SubsystemBase{
 
     public RelativeEncoder lifter1Encoder = lifter1.getEncoder();
     public RelativeEncoder lifter2Encoder = lifter2.getEncoder();
+
+    public static enum LifterState{
+        MANUAL,
+        UP
+    }
+
+    public static LifterState lifterState = LifterState.MANUAL;
 
     public LifterSubsystem(){
         lifter1.restoreFactoryDefaults();
@@ -54,7 +64,11 @@ public class LifterSubsystem extends SubsystemBase{
         return lifter2Encoder.getPosition();
     }
 
-    public void periodic(){
+    public Command lifterUpTrap(){
+        return runOnce(() -> LifterSubsystem.lifterState = LifterState.UP);
+    }
 
+    public void periodic(){
+        SmartDashboard.putString("Lifter State: ", "" + LifterSubsystem.lifterState);
     }
 }

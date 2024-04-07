@@ -66,7 +66,12 @@ public class RotaterCommand extends Command{
             }
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.AUTO){
-            m_rotaterSubsystem.toPosition(evalAngle());
+            if(Math.abs(evalAngle() + 4.37) < .1){
+                m_rotaterSubsystem.toPosition(-9.09);
+            }
+            else{
+                m_rotaterSubsystem.toPosition(evalAngle());
+            }
         }
         else if(RotaterSubsystem.rotaterState == RotaterState.OFF){
 

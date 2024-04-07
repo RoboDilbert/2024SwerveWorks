@@ -232,10 +232,10 @@ public class SwerveSubsystem extends SubsystemBase {
         desiredStates[2].speedMetersPerSecond *= (1.2 - brakeFunction.get());
         desiredStates[3].speedMetersPerSecond *= (1.2 - brakeFunction.get());
 
-        desiredStates[0].speedMetersPerSecond *= 0.8;
-        desiredStates[1].speedMetersPerSecond *= 0.8;
-        desiredStates[2].speedMetersPerSecond *= 0.8;
-        desiredStates[3].speedMetersPerSecond *= 0.8;
+        desiredStates[0].speedMetersPerSecond *= 0.96;
+        desiredStates[1].speedMetersPerSecond *= 0.96;
+        desiredStates[2].speedMetersPerSecond *= 0.96;
+        desiredStates[3].speedMetersPerSecond *= 0.96;
 
         frontLeft.setDesiredState(desiredStates[0]);
         frontRight.setDesiredState(desiredStates[1]);
