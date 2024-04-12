@@ -78,7 +78,7 @@ public class ShooterSubsystem extends SubsystemBase{
     public void maxSpeed(){
         //shooterMotor1_PidController.setReference(-(MAX_RPM - 1000), com.revrobotics.CANSparkBase.ControlType.kVelocity);
         //shooterMotor2_PidController.setReference(MAX_RPM, com.revrobotics.CANSparkBase.ControlType.kVelocity);
-        shooterMotor1.set(.3);
+        shooterMotor1.set(.4);
         shooterMotor2.set(-1);
     }
 

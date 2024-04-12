@@ -100,6 +100,15 @@ public class IntakeSubsystem extends SubsystemBase{
                     run(.75);
             });
     }
+
+    public Command intakeOff(){
+        return runOnce(
+            () -> {
+                    IntakeSubsystem.intakeState = IntakeState.OFF;
+                    FeederSubsystem.feederState = FeederState.OFF;
+                    run(0);
+            });
+    }
     
     public void periodic(){
         SmartDashboard.putString("Intake State: ", "" + IntakeSubsystem.intakeState);

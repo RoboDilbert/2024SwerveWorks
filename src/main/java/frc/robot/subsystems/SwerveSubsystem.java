@@ -8,6 +8,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.LimelightHelpers;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -67,19 +70,20 @@ public class SwerveSubsystem extends SubsystemBase {
     private final AHRS gyro = new AHRS(SPI.Port.kMXP);
     private SwerveModulePosition[] modulePosition = new SwerveModulePosition[4];
     private SwerveModuleState[] moduleStates = new SwerveModuleState[4]; 
+    //private PoseEstimator m_PoseEstimator = new PoseEstimator<>(null, odometer, null, null)
 
     public static double gyroAngleAuto = 0;
 
     public SwerveSubsystem() {
         modulePosition[0] = new SwerveModulePosition(frontLeft.getDrivePosition(), frontLeft.getState().angle);
-        modulePosition[1] = new SwerveModulePosition(frontRight.getDrivePosition(), frontRight.getState().angle);
-        modulePosition[2] = new SwerveModulePosition(backLeft.getDrivePosition(), backLeft.getState().angle);
+        modulePosition[1] = new SwerveModulePosition(backLeft.getDrivePosition(), backLeft.getState().angle);
+        modulePosition[2] = new SwerveModulePosition(frontRight.getDrivePosition(), frontRight.getState().angle);
         modulePosition[3] = new SwerveModulePosition(backRight.getDrivePosition(), backRight.getState().angle);
         
         moduleStates[0] = new SwerveModuleState(frontLeft.getDriveVelocity(), frontLeft.getState().angle);
-        moduleStates[1] = new SwerveModuleState(frontRight.getDriveVelocity(), frontLeft.getState().angle);
-        moduleStates[2] = new SwerveModuleState(backLeft.getDriveVelocity(), frontLeft.getState().angle);
-        moduleStates[3] = new SwerveModuleState(backRight.getDriveVelocity(), frontLeft.getState().angle);
+        moduleStates[1] = new SwerveModuleState(backLeft.getDriveVelocity(), backLeft.getState().angle);
+        moduleStates[2] = new SwerveModuleState(frontRight.getDriveVelocity(), frontRight.getState().angle);
+        moduleStates[3] = new SwerveModuleState(backRight.getDriveVelocity(), backRight.getState().angle);
 
         odometer = new SwerveDriveOdometry(Constants.DriveConstants.kDriveKinematics,
         new Rotation2d(), modulePosition);
@@ -102,15 +106,37 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public double getHeading() {
-        return Math.IEEEremainder((gyro.getAngle()), 360);
+        return Math.IEEEremainder((-gyro.getAngle()), 360);
+    }
+    /*
+    public void limelightHeading() {
+        boolean doRejectUpdate = false;
+        LimelightHelpers.SetRobotOrientation("limelight", 0, 0, 0, 0, 180, 0);
+        LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight");
+        if(Math.abs(gyro.getRate()) > 720) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+      {
+        doRejectUpdate = true;
+      }
+      if(!doRejectUpdate)
+      {
+        m_PoseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
+        m_PoseEstimator.addVisionMeasurement(
+            mt2.pose,
+            mt2.timestampSeconds);
+      }
+    }
+    */
+
+    public double getHeading2() {
+        return Math.IEEEremainder((-gyro.getAngle()), 360);
     }
 
     public Rotation2d getRotation2d() {
-        return Rotation2d.fromDegrees(getHeading());
+        return Rotation2d.fromDegrees(getHeading2());
     }
 
     public Rotation2d getRotation2dTele() {
-        return Rotation2d.fromDegrees(Math.IEEEremainder(gyro.getAngle() - 90, 360));
+        return Rotation2d.fromDegrees(Math.IEEEremainder(-gyro.getAngle() + 90, 360));
     }
 
     public Command setStaticHeading(double offset){
@@ -122,8 +148,9 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Pose2d getPose() {
-        Pose2d nitin = new Pose2d(new Translation2d(odometer.getPoseMeters().getTranslation().getX(), odometer.getPoseMeters().getTranslation().getY()), new Rotation2d(-odometer.getPoseMeters().getRotation().getRadians()));
-        return nitin;
+        //Pose2d nitin = new Pose2d(new Translation2d(odometer.getPoseMeters().getTranslation().getX(), odometer.getPoseMeters().getTranslation().getY()), new Rotation2d(-odometer.getPoseMeters().getRotation().getRadians()));
+        //return nitin;
+        return odometer.getPoseMeters();
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -146,23 +173,23 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void updateStates(SwerveModuleState[] moduleStatessss){
         moduleStatessss[0].speedMetersPerSecond = frontLeft.getDriveVelocity();
-        moduleStatessss[1].speedMetersPerSecond = frontRight.getDriveVelocity();
-        moduleStatessss[2].speedMetersPerSecond = backLeft.getDriveVelocity();
+        moduleStatessss[1].speedMetersPerSecond = backLeft.getDriveVelocity();
+        moduleStatessss[2].speedMetersPerSecond = frontRight.getDriveVelocity();
         moduleStatessss[3].speedMetersPerSecond = backRight.getDriveVelocity();
 
         moduleStatessss[0].angle = frontLeft.getState().angle;
-        moduleStatessss[1].angle = frontRight.getState().angle;
-        moduleStatessss[2].angle = backLeft.getState().angle;
+        moduleStatessss[1].angle = backLeft.getState().angle;
+        moduleStatessss[2].angle = frontRight.getState().angle;
         moduleStatessss[3].angle = backRight.getState().angle;
 
         modulePosition[0].distanceMeters = frontLeft.getDrivePosition();
-        modulePosition[1].distanceMeters = frontRight.getDrivePosition();
-        modulePosition[2].distanceMeters = backLeft.getDrivePosition();
+        modulePosition[1].distanceMeters = backLeft.getDrivePosition();
+        modulePosition[2].distanceMeters = frontRight.getDrivePosition();
         modulePosition[3].distanceMeters = backRight.getDrivePosition();
 
         modulePosition[0].angle = frontLeft.getState().angle;
-        modulePosition[1].angle = frontRight.getState().angle;
-        modulePosition[2].angle = backLeft.getState().angle;
+        modulePosition[1].angle = backLeft.getState().angle;
+        modulePosition[2].angle = frontRight.getState().angle;
         modulePosition[3].angle = backRight.getState().angle;
     }
 
@@ -170,7 +197,11 @@ public class SwerveSubsystem extends SubsystemBase {
     public void periodic() {
         odometer.update(getRotation2d(), modulePosition);
         updateStates(moduleStates);
-        SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("Robot Heading", getHeading2());
+        SmartDashboard.putNumber("Pose X", odometer.getPoseMeters().getX());
+        SmartDashboard.putNumber("Pose Y", odometer.getPoseMeters().getY());
+        SmartDashboard.putNumber("Pose Heading", odometer.getPoseMeters().getRotation().getDegrees());
+
     }
 
     public void stopModules() {
@@ -218,8 +249,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
 
         frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
+        backLeft.setDesiredState(desiredStates[1]);
+        frontRight.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     } 
 
@@ -238,16 +269,16 @@ public class SwerveSubsystem extends SubsystemBase {
         desiredStates[3].speedMetersPerSecond *= 0.96;
 
         frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
+        backLeft.setDesiredState(desiredStates[1]);
+        frontRight.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     } 
 
     public ChassisSpeeds getChassisSpeed() {
         return Constants.DriveConstants.kDriveKinematics.toChassisSpeeds(
             frontLeft.getState(),
-            frontRight.getState(),
             backLeft.getState(),
+            frontRight.getState(),
             backRight.getState()
          );
      }
@@ -259,8 +290,8 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getChassisSpeed, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             this::drive, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
             new HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely live in your Constants class
-                    new PIDConstants(2.5, 0, 0), // Translation PID constants
-                    new PIDConstants(2.3, 0, 0), // Rotation PID constants
+                    new PIDConstants(2.5, 0.3, 0), // Translation PID constants  2,0,0
+                    new PIDConstants(0.9, 0, 0), // Rotation PID constants
                     5, // Max module speed, in m/s
                     20.3, // Drive base radius in meters. Distance from robot center to furthest module.
                     new ReplanningConfig() // Default path replanning config. See the API for the options here

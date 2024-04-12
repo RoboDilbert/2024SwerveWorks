@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 15.19,
-      "y": 5.54
+      "x": 0.71,
+      "y": 4.41
     },
-    "rotation": 0
+    "rotation": -61.38927339617358
   },
   "command": {
     "type": "sequential",
@@ -28,7 +28,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.13
+                        "waitTime": 0.35
                       }
                     },
                     {
@@ -50,6 +50,18 @@
                       }
                     },
                     {
+                      "type": "named",
+                      "data": {
+                        "name": "intakeOn"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "rotaterIntake"
+                      }
+                    },
+                    {
                       "type": "deadline",
                       "data": {
                         "commands": [
@@ -60,13 +72,13 @@
                                 {
                                   "type": "path",
                                   "data": {
-                                    "pathName": "ring1"
+                                    "pathName": "L1Ring"
                                   }
                                 },
                                 {
                                   "type": "path",
                                   "data": {
-                                    "pathName": "shoot"
+                                    "pathName": "L1Shoot"
                                   }
                                 }
                               ]
@@ -94,85 +106,9 @@
                       }
                     },
                     {
-                      "type": "deadline",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "sequential",
-                            "data": {
-                              "commands": [
-                                {
-                                  "type": "path",
-                                  "data": {
-                                    "pathName": "ring2"
-                                  }
-                                },
-                                {
-                                  "type": "path",
-                                  "data": {
-                                    "pathName": "shoot2"
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "rotater"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
-                        "name": "shoot2"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "feed"
-                      }
-                    },
-                    {
-                      "type": "deadline",
-                      "data": {
-                        "commands": [
-                          {
-                            "type": "sequential",
-                            "data": {
-                              "commands": [
-                                {
-                                  "type": "path",
-                                  "data": {
-                                    "pathName": "ring3"
-                                  }
-                                },
-                                {
-                                  "type": "path",
-                                  "data": {
-                                    "pathName": "shoot3"
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "type": "named",
-                            "data": {
-                              "name": "rotater"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "shoot3"
+                        "name": "shooterOff"
                       }
                     }
                   ]

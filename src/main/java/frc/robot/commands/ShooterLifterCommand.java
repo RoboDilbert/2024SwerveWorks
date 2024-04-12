@@ -52,7 +52,7 @@ public class ShooterLifterCommand extends Command{
         }
         else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.AMP && ShooterSubsystem.shooterState == ShooterState.AMP){
             if(m_ShooterLifterSubsystem.getPosition() < 42){
-                m_ShooterLifterSubsystem.run(0.5);
+                m_ShooterLifterSubsystem.run(0.9);
             }
             else if(m_ShooterLifterSubsystem.getPosition() > 42){
                 //m_ShooterLifterSubsystem.run(-0.75);
@@ -64,13 +64,13 @@ public class ShooterLifterCommand extends Command{
         }
         else if(ShooterLifterSubsystem.shooterLifterState == ShooterLifterState.DOWN){
             if(m_ShooterLifterSubsystem.getPosition() > 0){
-                m_ShooterLifterSubsystem.run(-.5);
+                m_ShooterLifterSubsystem.run(-.65);
             }
             else if(m_ShooterLifterSubsystem.getPosition() < 0){
-                m_ShooterLifterSubsystem.run(0.5);
+                m_ShooterLifterSubsystem.run(0.65);
             }
     
-            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 0) < 5){
+            if(Math.abs(m_ShooterLifterSubsystem.getPosition() - 0) < 3){
                 m_ShooterLifterSubsystem.run(0);
                 ShooterLifterSubsystem.shooterLifterState = ShooterLifterState.MANUAL;
             }

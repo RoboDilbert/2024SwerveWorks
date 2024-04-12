@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,6 +21,8 @@ import frc.robot.commands.AutoMoveCommand;
 import frc.robot.commands.AutoMoveIntake;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutoShootClose;
+import frc.robot.commands.AutoShootFeed;
+import frc.robot.commands.FeedBackCommand;
 import frc.robot.commands.FeederCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeShooterAuto;
@@ -114,14 +118,13 @@ public class RobotContainer {
                 NamedCommands.registerCommand("rotaterIntake", rotaterSubsystem.autoIntake());
                 NamedCommands.registerCommand("shooterMax", new ShooterMaxCommand(shooterSubsystem));
                 NamedCommands.registerCommand("feed", feederSubsystem.feedPlease());
+                NamedCommands.registerCommand("intakeOff", intakeSubsystem.intakeOff());
+                NamedCommands.registerCommand("feedOff", feederSubsystem.feedOff());
                 NamedCommands.registerCommand("shooterOff", new InstantCommand(shooterSubsystem::coast));
-                NamedCommands.registerCommand("shoot", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0));
-                NamedCommands.registerCommand("shoot2", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0));
-                NamedCommands.registerCommand("shoot3", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0));
-                NamedCommands.registerCommand("intake1", new IntakeShooterAuto(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem));
-                NamedCommands.registerCommand("intake2", new IntakeShooterAuto(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem));
-                NamedCommands.registerCommand("intake3", new IntakeShooterAuto(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem));
-
+                NamedCommands.registerCommand("feedBack", new FeedBackCommand(feederSubsystem));
+                NamedCommands.registerCommand("feedBack2", new FeedBackCommand(feederSubsystem));
+                NamedCommands.registerCommand("shootStageCenter", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
+                NamedCommands.registerCommand("shootAmp", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
 
                 configureButtonBindings(); 
         }
@@ -171,15 +174,19 @@ public class RobotContainer {
 
         }
 
-        public Command getAutonomousCommand(){
-                return autoChooser.getSelected();
-        }
-
         /*public Command getAutonomousCommand(){
-                swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(2, 7), new Rotation2d()));
-
-                return AutoBuilder.buildAuto("test");
+                return autoChooser.getSelected();
         }*/
+
+        public Command getAutonomousCommand(){
+                swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.71, 4.41), new Rotation2d())); //L1 and stagecenter
+                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.37, 5.56), new Rotation2d())); //M12
+                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.47, 7), new Rotation2d())); //muktest
+                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.79, 6.67), new Rotation2d())); //AmpRing5
+        
+
+                return AutoBuilder.buildAuto("Center31");
+        }
         
         SequentialCommandGroup M2 = new SequentialCommandGroup(
                 swerveSubsystem.setStaticHeading(0),

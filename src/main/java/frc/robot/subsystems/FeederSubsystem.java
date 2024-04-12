@@ -71,6 +71,7 @@ public class FeederSubsystem extends SubsystemBase{
     public Command feedOff(){
         return runOnce(() -> {
                 FeederSubsystem.feederState = FeederState.OFF;
+                feed(() -> 0);
             }
             );
     }
