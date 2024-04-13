@@ -65,7 +65,7 @@ public class RobotContainer {
     CommandXboxController driver_controller = new CommandXboxController(0);
     CommandXboxController manipulator = new CommandXboxController(2); 
 
-        private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> autoChooser2;
 
 
         public RobotContainer() {
@@ -95,22 +95,11 @@ public class RobotContainer {
 
                 ledSubsystem.setDefaultCommand(new LEDCommand(ledSubsystem));
 
-                autoChooser = AutoBuilder.buildAutoChooser();
+                autoChooser2 = AutoBuilder.buildAutoChooser();
 
-                autoChooser.setDefaultOption("M2", M2);
-                autoChooser.addOption("RS3",  RS3);
-                autoChooser.addOption("LS1", LS1);
-                //autoChooser.addOption("L1",  L1);
-                //autoChooser.addOption("R3", R3);
-                //autoChooser.addOption("M1", M1);
-                //autoChooser.addOption("M3", M3);
-                autoChooser.addOption("M23", M23);
-                autoChooser.addOption("M21", M21);
-                autoChooser.addOption("LR", LR);
-                //autoChooser.addOption("M123", M123);
-                //autoChooser.addOption("TEST", TEST);
-
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                SmartDashboard.putData("Auto Chooser ", autoChooser2);
+                autoChooser2.addOption("MStage4", AutoBuilder.buildAuto("MStage4"));
+                SmartDashboard.putData("Selected: ", autoChooser2.getSelected());
 
                 NamedCommands.registerCommand("intakeDefault", new IntakeCommand(intakeSubsystem));
                 NamedCommands.registerCommand("rotater", new RotaterCommand(rotaterSubsystem));
@@ -125,6 +114,10 @@ public class RobotContainer {
                 NamedCommands.registerCommand("feedBack2", new FeedBackCommand(feederSubsystem));
                 NamedCommands.registerCommand("shootStageCenter", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
                 NamedCommands.registerCommand("shootAmp", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
+                NamedCommands.registerCommand("shoot", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3.5));
+                NamedCommands.registerCommand("shoot2", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -8));
+                NamedCommands.registerCommand("shoot3", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -8.8));
+
 
                 configureButtonBindings(); 
         }
@@ -179,212 +172,12 @@ public class RobotContainer {
         }*/
 
         public Command getAutonomousCommand(){
-                swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.71, 4.41), new Rotation2d())); //L1 and stagecenter
-                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.37, 5.56), new Rotation2d())); //M12
+                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.71, 4.41), new Rotation2d())); //L1 and stagecenter
+                swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.37, 5.56), new Rotation2d())); //M12
                 //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.47, 7), new Rotation2d())); //muktest
                 //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.79, 6.67), new Rotation2d())); //AmpRing5
-        
+                //if(autoChooser.getSelected() == )
 
-                return AutoBuilder.buildAuto("Center31");
-        }
-        
-        SequentialCommandGroup M2 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1.5),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false, .3, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, true, .25, false)
-        );
-        SequentialCommandGroup RS3 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedOff(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 1, false, .15, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.5),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.2, 1.1, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 1.4, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 2.4, 1.55, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3.8),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 1.3, false, .25, false)
-        );
-        SequentialCommandGroup LS1 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedOff(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, -1, false, .1, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.5),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.2, -1.2, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, -1.5, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 2.4, -1.55, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -4.1),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, -1.3, false, .25, false)
-        );
-        SequentialCommandGroup L1 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(40),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.4, -1.4, false),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false)
-        );
-        SequentialCommandGroup R3 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(-40),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 2.4, 1, false),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false)
-        );
-        SequentialCommandGroup M3 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, 1.3, false)
-        );
-
-        SequentialCommandGroup M1 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false),
-                new AutoShoot(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 200, -11.9),
-                new AutoMoveCommand(swerveSubsystem, rotaterSubsystem, shooterLifterSubsystem, 3, -1.4, false)
-        );
-        SequentialCommandGroup M23 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(.75),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .4, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.85, .6, false, .3, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 2, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, .5, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, false, .25, false)
-        );
-        SequentialCommandGroup M21 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(.75),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, true, .4, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.85, -.6, false, .3, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, -2, false, .3, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.8, -.5, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -0.4),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.8, 0, false, .25, false)
-        );
-        SequentialCommandGroup LR = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(1),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(1),
-                new InstantCommand(shooterSubsystem::coast),
-                feederSubsystem.feedOff()
-        );
-        SequentialCommandGroup M123 = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(.25),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.6, -2, false, .25, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 0, false, .25, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0),
-                feederSubsystem.feedPlease(),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.5, 1.8, false, .25, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0),
-                new InstantCommand(shooterSubsystem::coast)
-        );
-        SequentialCommandGroup TEST = new SequentialCommandGroup(
-                swerveSubsystem.setStaticHeading(0),
-                new ShooterMaxCommand(shooterSubsystem),
-                new WaitCommand(.25),
-                feederSubsystem.feedPlease(),
-                new WaitCommand(.25),
-                intakeSubsystem.autoIntake(),
-                rotaterSubsystem.autoIntake(),
-                new InstantCommand(shooterSubsystem::coast),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 3.3, 0, false, .25, true),
-                new AutoMoveIntake(swerveSubsystem, rotaterSubsystem, intakeSubsystem, feederSubsystem, 1.75, 0, false, .25, true),
-                new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, 0),
-                new InstantCommand(shooterSubsystem::coast)
-        );
+                return AutoBuilder.buildAuto("MStageMid");
+        }    
 }
