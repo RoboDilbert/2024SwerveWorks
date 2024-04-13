@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.71,
-      "y": 4.41
+      "x": 0.76,
+      "y": 6.68
     },
-    "rotation": -61.38927339617358
+    "rotation": 60.0
   },
   "command": {
     "type": "sequential",
@@ -72,13 +72,13 @@
                                 {
                                   "type": "path",
                                   "data": {
-                                    "pathName": "L1Ring"
+                                    "pathName": "R1Ring"
                                   }
                                 },
                                 {
                                   "type": "path",
                                   "data": {
-                                    "pathName": "L1Shoot"
+                                    "pathName": "R1Shoot"
                                   }
                                 }
                               ]
@@ -109,6 +109,12 @@
                       "type": "named",
                       "data": {
                         "name": "shooterOff"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intakeOff"
                       }
                     }
                   ]

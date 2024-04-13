@@ -66,7 +66,4 @@ public class ShooterLifterSubsystem extends SubsystemBase{
     public static void stop(){
         shooterLifter1.stopMotor();
     }
-    public void periodic(){
-
-    }
 }

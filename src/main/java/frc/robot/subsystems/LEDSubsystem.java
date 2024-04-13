@@ -10,6 +10,15 @@ public class LEDSubsystem extends SubsystemBase {
 
   private Spark ledPWMController;
 
+  public enum LEDState{
+    OFF,
+    INTAKE,
+    RING,
+    SHOOT
+  }
+
+  public static LEDState ledState = LEDState.OFF;
+
   public LEDSubsystem() {
     ledPWMController = new Spark(Constants.LEDConstants.LED_PWM);
     //sets the PWM port it's wired to on the rio
@@ -28,14 +37,13 @@ public class LEDSubsystem extends SubsystemBase {
 
   // Declare the preset LED modes we want to use
   public enum LEDMode {
-    RING_IN(0.87),
-    NO_RING(0.61),
+    RING(0.87),
     PROBLEMA(-0.11),
-    READYTOSHOOT(0.77),
-    AUTO(-0.75),
-    OFF(1);
+    SHOOT(0.77),
+    INTAKE(0.69),
+    OFF(.99);
     //red: 0.61 green: 0.77 blue: 0.87
-  
+
     public double pwmSignal;
     LEDMode(double pwmSignal) {
       this.pwmSignal = pwmSignal;

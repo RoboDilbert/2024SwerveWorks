@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.RotaterSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
+import frc.robot.subsystems.LEDSubsystem;
+import frc.robot.subsystems.LEDSubsystem.LEDState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterSpeedState;
@@ -44,20 +46,7 @@ public class FeederCommand extends Command{
             m_feederSubsystem.feed(() -> -.05);
         }
         else if(FeederSubsystem.feederState == FeederState.BACK){
-            if(!backSpin){
-                backSpin = true;
-                initialPosBack = m_feederSubsystem.getFeederPosition();
-                m_feederSubsystem.feed(() -> .125);
-            }
-            if(backSpin){
-                m_feederSubsystem.feed(() -> .125);
-                if(m_feederSubsystem.getFeederPosition() > initialPosBack + 4){
-                    backSpin = false;
-                    m_feederSubsystem.feed(() -> 0);
-                    FeederSubsystem.feederState = FeederState.OFF;
-                    shoot = false;
-                }
-            }
+            m_feederSubsystem.feed(() -> .125);
         }
         else if(FeederSubsystem.feederState == FeederState.SHOOT){
             if(!shoot){
@@ -73,6 +62,7 @@ public class FeederCommand extends Command{
                     FeederSubsystem.feederState = FeederState.OFF;
                     ShooterSubsystem.speedState = ShooterSpeedState.OFF;
                     RotaterSubsystem.rotaterState = RotaterState.INTAKE; 
+                    LEDSubsystem.ledState = LEDState.OFF;
                 }
             }
         }

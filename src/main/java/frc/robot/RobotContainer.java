@@ -3,6 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -58,15 +59,14 @@ public class RobotContainer {
     private final LifterSubsystem lifterSubsystem = new LifterSubsystem();
     private final RotaterSubsystem rotaterSubsystem = new RotaterSubsystem();
     private final FeederSubsystem feederSubsystem = new FeederSubsystem();
-    private final LEDSubsystem ledSubsystem = new LEDSubsystem();
+    public final LEDSubsystem ledSubsystem = new LEDSubsystem();
     private final ShooterLifterSubsystem shooterLifterSubsystem = new ShooterLifterSubsystem();
     
 
     CommandXboxController driver_controller = new CommandXboxController(0);
     CommandXboxController manipulator = new CommandXboxController(2); 
 
-        private final SendableChooser<Command> autoChooser2;
-
+    private AutoCommandManager m_autoManager = new AutoCommandManager(swerveSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, feederSubsystem);
 
         public RobotContainer() {
                 swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(swerveSubsystem,
@@ -74,6 +74,7 @@ public class RobotContainer {
                         () -> -driver_controller.getLeftY(),
                         () -> -driver_controller.getRawAxis(4),
                         () -> driver_controller.getRawAxis(3),
+                        () -> driver_controller.getRawAxis(2),
                         () -> true
                 ));
                 
@@ -94,31 +95,7 @@ public class RobotContainer {
                 sensorsSubsystem.setRangeMode("Long");
 
                 ledSubsystem.setDefaultCommand(new LEDCommand(ledSubsystem));
-
-                autoChooser2 = AutoBuilder.buildAutoChooser();
-
-                SmartDashboard.putData("Auto Chooser ", autoChooser2);
-                autoChooser2.addOption("MStage4", AutoBuilder.buildAuto("MStage4"));
-                SmartDashboard.putData("Selected: ", autoChooser2.getSelected());
-
-                NamedCommands.registerCommand("intakeDefault", new IntakeCommand(intakeSubsystem));
-                NamedCommands.registerCommand("rotater", new RotaterCommand(rotaterSubsystem));
-                NamedCommands.registerCommand("intakeOn", intakeSubsystem.autoIntake());
-                NamedCommands.registerCommand("rotaterIntake", rotaterSubsystem.autoIntake());
-                NamedCommands.registerCommand("shooterMax", new ShooterMaxCommand(shooterSubsystem));
-                NamedCommands.registerCommand("feed", feederSubsystem.feedPlease());
-                NamedCommands.registerCommand("intakeOff", intakeSubsystem.intakeOff());
-                NamedCommands.registerCommand("feedOff", feederSubsystem.feedOff());
-                NamedCommands.registerCommand("shooterOff", new InstantCommand(shooterSubsystem::coast));
-                NamedCommands.registerCommand("feedBack", new FeedBackCommand(feederSubsystem));
-                NamedCommands.registerCommand("feedBack2", new FeedBackCommand(feederSubsystem));
-                NamedCommands.registerCommand("shootStageCenter", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
-                NamedCommands.registerCommand("shootAmp", new AutoShootFeed(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3));
-                NamedCommands.registerCommand("shoot", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -3.5));
-                NamedCommands.registerCommand("shoot2", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -8));
-                NamedCommands.registerCommand("shoot3", new AutoShootClose(feederSubsystem, shooterSubsystem, intakeSubsystem, rotaterSubsystem, -8.8));
-
-
+                
                 configureButtonBindings(); 
         }
         
@@ -131,15 +108,6 @@ public class RobotContainer {
                 () -> -driver_controller.getLeftX(),
                 () -> -driver_controller.getLeftY() 
         ));
-        /*driver_controller.x().whileTrue(new TrackRingCommand(swerveSubsystem,
-                () -> -driver_controller.getLeftX(),
-                () -> -driver_controller.getLeftY()
-        ));*/
-        //[TEMP] going to the amp is the left bumper
-        /*driver_controller.leftBumper().whileTrue(new ToAmpCommand(swerveSubsystem, sensorsSubsystem));
-        driver_controller.rightBumper().whileTrue(new TrackSpeakerCommand(swerveSubsystem, 
-                () -> -driver_controller.getLeftX(), null
-        ));*/
 
         driver_controller.leftBumper().onTrue(new InstantCommand(rotaterSubsystem::setAuto));
         driver_controller.x().onTrue(rotaterSubsystem.reset());
@@ -163,8 +131,6 @@ public class RobotContainer {
 
         manipulator.leftBumper().onTrue(feederSubsystem.shootUpAmp());
 
-        DriverStation.reportError("Intake State: " + IntakeSubsystem.intakeState, true);
-
         }
 
         /*public Command getAutonomousCommand(){
@@ -172,12 +138,35 @@ public class RobotContainer {
         }*/
 
         public Command getAutonomousCommand(){
-                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.71, 4.41), new Rotation2d())); //L1 and stagecenter
-                swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.37, 5.56), new Rotation2d())); //M12
-                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.47, 7), new Rotation2d())); //muktest
-                //swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.79, 6.67), new Rotation2d())); //AmpRing5
-                //if(autoChooser.getSelected() == )
+                Command autoCommand = m_autoManager.getAutoManagerSelected();
 
-                return AutoBuilder.buildAuto("MStageMid");
+                //MStage4 com.pathplanner.lib.commands.PathPlannerAuto@12a209c
+                //MStage3 com.pathplanner.lib.commands.PathPlannerAuto@66af20
+                //MAmp3 com.pathplanner.lib.commands.PathPlannerAuto@93b025
+                //Amp2 com.pathplanner.lib.commands.PathPlannerAuto@7ddf94
+                //Stage2 com.pathplanner.lib.commands.PathPlannerAuto@13ac989
+                //M2 com.pathplanner.lib.commands.PathPlannerAuto@505305
+                //Center21 com.pathplanner.lib.commands.PathPlannerAuto@12ea799
+                //Center31 com.pathplanner.lib.commands.PathPlannerAuto@c03695
+                //AmpRing5 com.pathplanner.lib.commands.PathPlannerAuto@9754d8
+
+                if(m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@66af20") || m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@12a209c") || m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@93b025") || m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@505305")){ //MStage4, MStage3, MAmp3, M2
+                        swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(1.37, 5.56), new Rotation2d())); 
+                }
+                else if(m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@7ddf94")){ //Amp2
+                        swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.76, 6.78), new Rotation2d())); 
+                }
+                else if(m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@13ac989")){ //Stage2
+                        swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.74, 4.41), new Rotation2d()));
+                }
+                else if(m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@12ea799") || m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@c03695")){ //Center21 and Center31
+                        swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.71, 4.41), new Rotation2d()));
+                }
+                else if(m_autoManager.getAutoManagerSelected().toString().equals("com.pathplanner.lib.commands.PathPlannerAuto@9754d8")){ //AmpRing5
+                        swerveSubsystem.setPose(new Rotation2d(), new Pose2d(new Translation2d(0.79, 6.61), new Rotation2d()));
+                }
+                
+                SmartDashboard.putString("Auto Selected", m_autoManager.getAutoManagerSelected().toString());
+                return autoCommand;
         }    
 }

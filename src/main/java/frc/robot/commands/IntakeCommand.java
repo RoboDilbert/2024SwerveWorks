@@ -3,9 +3,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterLifterSubsystem;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeState;
+import frc.robot.subsystems.LEDSubsystem.LEDState;
 import frc.robot.subsystems.ShooterLifterSubsystem.ShooterLifterState;
 
 public class IntakeCommand extends Command{
@@ -37,7 +39,7 @@ public class IntakeCommand extends Command{
             if(m_intakeSubsystem.getDistance() < 50){
                 m_intakeSubsystem.run(0);
                 FeederSubsystem.feederState = FeederState.BACK;
-                IntakeSubsystem.intakeState = IntakeState.OFF;
+                IntakeSubsystem.intakeState = IntakeState.BACK;
             }
         }
         else if(IntakeSubsystem.intakeState == IntakeState.SLOW){
@@ -58,6 +60,16 @@ public class IntakeCommand extends Command{
         }
         else if(IntakeSubsystem.intakeState == IntakeState.REVERSE){
             m_intakeSubsystem.run(-1);
+        }
+        else if(IntakeSubsystem.intakeState == IntakeState.BACK){
+            if(m_intakeSubsystem.getDistance() > 44){
+                m_intakeSubsystem.run(0);
+                FeederSubsystem.feederState = FeederState.OFF;
+                IntakeSubsystem.intakeState = IntakeState.OFF;
+            }
+        }
+        if(LEDSubsystem.ledState == LEDState.INTAKE && m_intakeSubsystem.getIntakeDistance() < 250){
+            LEDSubsystem.ledState = LEDState.RING;
         }
     }
 

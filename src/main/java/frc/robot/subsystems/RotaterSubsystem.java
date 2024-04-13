@@ -19,6 +19,7 @@ public class RotaterSubsystem extends SubsystemBase{
         SHOOT,
         AUTO,
         RESET,
+        AUTOSHOOT,
         OFF
     }
 

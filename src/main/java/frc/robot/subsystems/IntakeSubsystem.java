@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.FeederSubsystem.FeederState;
+import frc.robot.subsystems.LEDSubsystem.LEDState;
 import frc.robot.subsystems.RotaterSubsystem.RotaterState;
 
 
@@ -29,7 +30,8 @@ public class IntakeSubsystem extends SubsystemBase{
         FEED,
         REVERSE,
         SLOW,
-        SLOWER
+        SLOWER,
+        BACK
     }
 
     public static IntakeState intakeState = IntakeState.OFF;
@@ -72,10 +74,12 @@ public class IntakeSubsystem extends SubsystemBase{
                 if(IntakeSubsystem.intakeState == IntakeState.OFF || IntakeSubsystem.intakeState == IntakeState.REVERSE){
                     IntakeSubsystem.intakeState = IntakeState.INTAKE;
                     RotaterSubsystem.rotaterState = RotaterState.INTAKE;
+                    LEDSubsystem.ledState = LEDState.INTAKE;
                 }
                 else if(IntakeSubsystem.intakeState == IntakeState.INTAKE){
                     IntakeSubsystem.intakeState = IntakeState.OFF;
                     FeederSubsystem.feederState = FeederState.OFF;
+                    LEDSubsystem.ledState = LEDState.OFF;
                 }
             });
       }
@@ -98,6 +102,13 @@ public class IntakeSubsystem extends SubsystemBase{
                     IntakeSubsystem.intakeState = IntakeState.INTAKE;
                     FeederSubsystem.feederState = FeederState.FEED;
                     run(.75);
+            });
+    }
+
+    public Command rotaterShoot(){
+        return runOnce(
+            () -> {
+                    RotaterSubsystem.rotaterState = RotaterState.AUTOSHOOT;
             });
     }
 

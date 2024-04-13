@@ -72,6 +72,12 @@
               "data": {
                 "name": "shooterMax"
               }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "rotaterShoot"
+              }
             }
           ]
         }

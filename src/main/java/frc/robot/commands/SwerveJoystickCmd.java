@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -16,6 +17,7 @@ public class SwerveJoystickCmd extends Command {
 
     private final SwerveSubsystem swerveSubsystem;
     private final Supplier<Double> xSpdFunction, ySpdFunction, turningSpdFunction, brakeFunction;
+    private final DoubleSupplier fieldFunction;
     private final Supplier<Boolean> fieldOrientedFunction;
     private final SlewRateLimiter turningLimiter;
     private ChassisSpeeds chassisSpeeds;    
@@ -23,12 +25,13 @@ public class SwerveJoystickCmd extends Command {
 
     public SwerveJoystickCmd(SwerveSubsystem swerveSubsystem,
             Supplier<Double> xSpdFunction, Supplier<Double> ySpdFunction, 
-            Supplier<Double> turningSpdFunction, Supplier<Double> brakeFunction, Supplier<Boolean> fieldOrientedFunction) {
+            Supplier<Double> turningSpdFunction, Supplier<Double> brakeFunction, DoubleSupplier fieldFunction, Supplier<Boolean> fieldOrientedFunction) {
         this.swerveSubsystem = swerveSubsystem;
         this.xSpdFunction = xSpdFunction;
         this.ySpdFunction = ySpdFunction;
         this.turningSpdFunction = turningSpdFunction;
         this.brakeFunction = brakeFunction;
+        this.fieldFunction = fieldFunction;
         this.fieldOrientedFunction = fieldOrientedFunction;
         this.turningLimiter = new SlewRateLimiter(DriveConstants.kTeleDriveMaxAngularAccelerationUnitsPerSecond);
         addRequirements(swerveSubsystem);
@@ -61,14 +64,14 @@ public class SwerveJoystickCmd extends Command {
         SmartDashboard.putNumber("Limelight Z", LimelightHelpers.getTargetPose3d_RobotSpace("limelight").getZ());
 
         //Construct desired chassis speeds
-        if (fieldOrientedFunction.get()) {
+        if (fieldFunction.getAsDouble() < .5) {
             // Relative to field
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
                     xSpeed, ySpeed, turningSpeed, swerveSubsystem.getRotation2dTele());
 
          } else {
             // Relative to robot
-            chassisSpeeds = new ChassisSpeeds(xSpeed, ySpeed, turningSpeed);
+            chassisSpeeds = new ChassisSpeeds(ySpeed, -xSpeed, turningSpeed);
         }
 
         //Convert chassis speeds to individual module states

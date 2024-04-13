@@ -73,6 +73,9 @@ public class RotaterCommand extends Command{
                 m_rotaterSubsystem.toPosition(evalAngle());
             }
         }
+        else if(RotaterSubsystem.rotaterState == RotaterState.AUTOSHOOT){
+            m_rotaterSubsystem.toPosition(-3);
+        }
         else if(RotaterSubsystem.rotaterState == RotaterState.OFF){
 
         }

@@ -43,7 +43,7 @@ public class AutoShootClose extends Command{
         FeederSubsystem.feederState = FeederState.OFF;
         shoot = true;
         initialPosShoot = m_feederSubsystem.getFeederPosition();
-        m_feederSubsystem.feed(() -> .5);
+        m_feederSubsystem.feed(() -> .125);
     }
 
     public double evalAngle() {
@@ -63,7 +63,7 @@ public class AutoShootClose extends Command{
         if(FeederSubsystem.feederState == FeederState.OFF){
             wait++;
         }
-        if(wait > 10){
+        if(m_intakeSubsystem.getDistance() > 44){
             m_feederSubsystem.feed(() -> 0);
             m_shooterSubsystem.maxSpeed();
         }

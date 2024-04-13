@@ -75,13 +75,19 @@
       "name": "New Event Marker",
       "waypointRelativePos": 0.75,
       "command": {
-        "type": "parallel",
+        "type": "sequential",
         "data": {
           "commands": [
             {
               "type": "named",
               "data": {
                 "name": "shooterMax"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "rotaterShoot"
               }
             }
           ]
